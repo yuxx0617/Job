@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Job.Model;
 
 public class SeletionModel
 {
+    [Key]
     public int ts_id { get; set; }
     public string seletion { get; set; }
     public bool MBTI_I { get; set; }

@@ -75,6 +75,7 @@ builder.Services
 
 
 // Service
+builder.Services.AddScoped<Token>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITestService, TestService>();
 

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Job.Controller;
 
+[ApiController]
+[Route("api/[controller]")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _service;
@@ -44,7 +46,6 @@ public class UserController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
-    [Authorize]
     [HttpPut(nameof(EditUser))]
     public IActionResult EditUser(EditUserImportModel editUser)
     {

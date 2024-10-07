@@ -34,7 +34,7 @@ public class UserDao : IUserDao
         {
             if (user.emailValid == userModel.emailValid)
             {
-                user.emailValid = null;
+                user.emailValid = "";
                 _context.Entry(user).Property(item => item.emailValid).IsModified = true;
             }
         }

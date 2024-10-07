@@ -10,6 +10,4 @@ public class AppDbContext : DbContext
     public DbSet<TestModel> Test { get; set; }
     public DbSet<SeletionModel> Seletion { get; set; }
     public DbSet<UserAnswerModel> UserAnswer { get; set; }
-    public DbSet<AnswerCountModel> AnswerCount { get; set; }
-
 }

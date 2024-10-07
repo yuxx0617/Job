@@ -15,15 +15,15 @@ public class UserService : IUserService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly Token _token;
     private readonly IUserDao _dao;
+    private string smtp_account = "jobwaitforyou@gmail.com"; // 帳號
+    private string smtp_password = "kavencurulmnmpot"; // 密碼
+    private string smtp_mail = "jobwaitforyou@gmail.com"; // 信箱
     public UserService(IUserDao dao, IHttpContextAccessor httpContextAccessor, Token token)
     {
         _dao = dao;
         _httpContextAccessor = httpContextAccessor;
         _token = token;
     }
-    private string smtp_account = "jobwaitforyou@gmail.com"; // 帳號
-    private string smtp_password = "kavencurulmnmpot"; // 密碼
-    private string smtp_mail = "jobwaitforyou@gmail.com"; // 信箱
 
     #region 寄驗證信
     public ResultViewModel EmailValid(EmailValidImportModel emailValid)
@@ -31,30 +31,44 @@ public class UserService : IUserService
         try
         {
             var user = _dao.GetUser(emailValid.account);
-            var userModel = new UserModel
+            if (user != null)
             {
-                account = user.account,
-                emailValid = user.emailValid,
-            };
-            var httpContext = _httpContextAccessor.HttpContext;
-            var expirationTime = DateTime.UtcNow.AddHours(48);
-            var expirationTimestamp = expirationTime.ToString("o"); // ISO 8601 格式
-            if (httpContext == null)
-            {
-                return new ResultViewModel("httpContext不存在");
-            }
-            string verifyUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/User/Validate?account={emailValid.account}&emailValid={emailValid.emailValid}&expires={expirationTimestamp}";
+                if (user.password == HashPassword(emailValid.password, user.salt))
+                {
+                    if (String.IsNullOrWhiteSpace(user.emailValid))
+                    {
+                        return new ResultViewModel("已完成驗證") { };
+                    }
+                    else
+                    {
+                        var userModel = new UserModel
+                        {
+                            account = user.account,
+                            password = user.password,
+                        };
+                        var httpContext = _httpContextAccessor.HttpContext;
+                        var expirationTime = DateTime.UtcNow.AddHours(48);
+                        var expirationTimestamp = expirationTime.ToString("o"); // ISO 8601 格式
+                        if (httpContext == null)
+                        {
+                            return new ResultViewModel("httpContext不存在");
+                        }
+                        string verifyUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/User/Validate?account={emailValid.account}&emailValid={user.emailValid}&expires={expirationTimestamp}";
 
-            string templPath = Path.Combine("EmailValid.html");
-            if (!System.IO.File.Exists(templPath))
-            {
-                return new ResultViewModel("郵件模板不存在");
-            }
-            string mailTemplate = System.IO.File.ReadAllText(templPath);
-            string mailBody = GetMailBody(mailTemplate, user.name, verifyUrl);
-            SendMail(mailBody, emailValid.account);
+                        string templPath = Path.Combine("EmailValid.html");
+                        if (!System.IO.File.Exists(templPath))
+                        {
+                            return new ResultViewModel("郵件模板不存在");
+                        }
+                        string mailTemplate = System.IO.File.ReadAllText(templPath);
+                        string mailBody = GetMailBody(mailTemplate, user.name, verifyUrl);
+                        SendMail(mailBody, emailValid.account);
 
-            return new ResultViewModel() { };
+                        return new ResultViewModel() { };
+                    }
+                }
+            }
+            return new ResultViewModel("帳號錯誤") { };
         }
         catch (Exception ex)
         {
@@ -71,7 +85,7 @@ public class UserService : IUserService
     {
         try
         {
-            SmtpClient smtpServer = new SmtpClient("@gmail.com");
+            SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
             smtpServer.Port = 587;
             smtpServer.Credentials = new System.Net.NetworkCredential(smtp_account, smtp_password);
             smtpServer.EnableSsl = true;
@@ -81,7 +95,6 @@ public class UserService : IUserService
             mail.Subject = "會員驗證信";
             mail.Body = MailBody;
             mail.IsBodyHtml = true;
-
             smtpServer.Send(mail);
         }
         catch (Exception ex)
@@ -100,7 +113,7 @@ public class UserService : IUserService
                 return new ResultViewModel("無效的過期時間");
             }
 
-            if (DateTime.UtcNow > expirationTime)
+            if (DateTime.Now > expirationTime)
             {
                 return new ResultViewModel("驗證連結已過期");
             }
@@ -115,7 +128,6 @@ public class UserService : IUserService
             {
                 return new ResultViewModel("驗證失敗");
             }
-
             return new ResultViewModel() { };
         }
         catch (Exception ex)
@@ -206,7 +218,7 @@ public class UserService : IUserService
             {
                 if (HashPassword(login.password, user.salt) == user.password)
                 {
-                    if (user.emailValid == null)
+                    if (String.IsNullOrWhiteSpace(login.emailValid))
                     {
                         if (!_dao.LoginDay(user))
                         {
@@ -258,7 +270,7 @@ public class UserService : IUserService
                         return new ResultViewModel("失敗");
                     }
 
-                    string forgettemplPath = Path.Combine("ForgetPassword.html");
+                    string forgettemplPath = Path.Combine("./EXmail/ForgetPassword.html");
                     if (!System.IO.File.Exists(forgettemplPath))
                     {
                         return new ResultViewModel("郵件模板不存在");
@@ -294,7 +306,7 @@ public class UserService : IUserService
     {
         try
         {
-            SmtpClient smtpServer = new SmtpClient("@gmail.com");
+            SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
             smtpServer.Port = 587;
             smtpServer.Credentials = new System.Net.NetworkCredential(smtp_account, smtp_password);
             smtpServer.EnableSsl = true;
@@ -304,7 +316,6 @@ public class UserService : IUserService
             mail.Subject = "會員忘記密碼信";
             mail.Body = MailBody;
             mail.IsBodyHtml = true;
-
             smtpServer.Send(mail);
         }
         catch (Exception ex)

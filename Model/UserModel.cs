@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Job.Model;
 
 public class UserModel
 {
+    [Key]
     public string account { get; set; }
     public string name { get; set; }
     public string password { get; set; }
