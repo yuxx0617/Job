@@ -62,5 +62,12 @@ public class UserController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
-
+    [HttpGet(nameof(UserList))]
+    public IActionResult UserList()
+    {
+        var result = _service.UserList();
+        if (result.isSuccess)
+            return Ok(result);
+        return BadRequest(result);
+    }
 }

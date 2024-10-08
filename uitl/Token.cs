@@ -22,6 +22,9 @@ public class Token
             Subject = new ClaimsIdentity(new[]
             {
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("account", userModel.account.ToString()),
+            new Claim("role", userModel.role.ToString()),
+
         }),
             Expires = DateTime.Now.AddMinutes(60),
             SigningCredentials = signingCredentials

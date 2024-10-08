@@ -4,86 +4,78 @@ using Job.Dao;
 using Job.Dao.Interface;
 using Job.Service;
 using Job.Service.Interface;
+using Job.util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-            builder =>
-            {
-                builder.AllowAnyOrigin()
-                                 .AllowAnyMethod()
-                                 .AllowAnyHeader();
-            });
-});
-
-// builder.Services.AddRazorPages();
+// 啟用控制器
 builder.Services.AddControllers();
 
+// 啟用 HTTP 上下文存取
 builder.Services.AddHttpContextAccessor();
 
-var corsOrigins = builder.Configuration.GetSection("Cors:AllowOrigin").Value.Split(',', StringSplitOptions.RemoveEmptyEntries);
+// CORS 設定
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowOrigin").Value?.Split(',', StringSplitOptions.RemoveEmptyEntries);
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-                                    builder =>
-                                    {
-                                        if (corsOrigins.Contains("*"))
-                                        {
-                                            builder.SetIsOriginAllowed(_ => true);
-                                        }
-                                        else
-                                        {
-                                            builder.WithOrigins(corsOrigins);
-                                        }
-                                        builder.AllowAnyMethod();
-                                        builder.AllowAnyHeader();
-                                        builder.AllowCredentials();
-                                    });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        if (corsOrigins != null && corsOrigins.Contains("*"))
+        {
+            policy.SetIsOriginAllowed(_ => true); // 允許所有來源
+        }
+        else if (corsOrigins != null)
+        {
+            policy.WithOrigins(corsOrigins); // 允許特定的來源
+        }
+        policy.AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials(); // 允許發送憑證
+    });
 });
 
+// 配置資料庫
 builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDB")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDB")));
 
-// 配置 JWT 驗證
+// 配置 JWT 認證
 builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // 使用 JWT Bearer 驗證方案
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.IncludeErrorDetails = true; // 在驗證失敗時，回應中包含錯誤詳細資訊
-
+        options.IncludeErrorDetails = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true, // 驗證 Token 的發行者
-            ValidIssuer = "Job", // 定義合法的發行者
+            ValidateIssuer = true,
+            ValidIssuer = "Job", // JWT 發行者
 
-            ValidateAudience = false, // 不驗證 Token 的接受者
+            ValidateAudience = false, // 不驗證接收者
 
-            ValidateLifetime = true, // 驗證 Token 是否在有效期內
+            ValidateLifetime = true, // 驗證是否過期
 
-            ValidateIssuerSigningKey = true, // 驗證簽章的密鑰
-
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ababababab@cdcdcdcdcd@efefefefef")) // 設定 JWT 簽章的密鑰
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ababababab@cdcdcdcdcd@efefefefef")) // 密鑰
         };
     });
 
+// 配置 appSettings 從配置文件中讀取
+builder.Services.Configure<appSetting>(builder.Configuration.GetSection("appSettings"));
 
-// Service
+// 註冊服務層
 builder.Services.AddScoped<Token>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITestService, TestService>();
 
-// Dao
+// 註冊 DAO 層
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<ITestDao, TestDao>();
 
-builder.Services.AddEndpointsApiExplorer();
+// 配置 Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
@@ -91,58 +83,37 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 在開發模式下啟用 Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1"));
 }
 
+// 啟用 HTTPS 重導向
 app.UseHttpsRedirection();
+
+// 啟用靜態文件支援
+var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+if (!Directory.Exists(wwwrootPath))
+{
+    Directory.CreateDirectory(wwwrootPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(wwwrootPath),
+    RequestPath = "/static" // 靜態資源的路徑
+});
+
+// 啟用 CORS
+app.UseCors("AllowAll");
+
+// 啟用認證與授權中介
 app.UseAuthentication();
 app.UseAuthorization();
 
+// 設定路由映射
 app.MapControllers();
-app.UseCors("AllowAll");
+
 app.Run();
-
-
-// var app = builder.Build();
-
-// var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-// if (!Directory.Exists(wwwrootPath))
-// {
-//     Directory.CreateDirectory(wwwrootPath);
-// }
-
-// if (!app.Environment.IsDevelopment())
-// {
-//     app.UseExceptionHandler("/Error");
-//     app.UseHsts();
-// }
-
-// app.UseHttpsRedirection();
-
-// app.UseStaticFiles(new StaticFileOptions
-// {
-//     FileProvider = new PhysicalFileProvider(wwwrootPath),
-//     RequestPath = "/static"
-// });
-
-// app.UseRouting();
-
-// app.UseAuthentication();
-// app.UseAuthorization();
-
-// app.UseSwagger();
-
-// app.UseSwaggerUI(c =>
-// {
-//     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-//     c.RoutePrefix = "swagger";
-// });
-
-// app.MapRazorPages();
-// app.MapControllers();
-
-// app.Run();

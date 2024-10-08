@@ -1,10 +1,9 @@
-using System.ComponentModel.DataAnnotations;
+using Job.Model;
 
-namespace Job.Model;
+namespace Job.ViewModel;
 
-public class SeletionModel
+public class TestSeletionViewModel
 {
-    [Key]
     public int ts_id { get; set; }
     public string seletion { get; set; }
     public bool MBTI_I { get; set; }

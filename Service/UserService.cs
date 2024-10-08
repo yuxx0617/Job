@@ -258,7 +258,7 @@ public class UserService : IUserService
             {
                 var rdCode = GetRandomCode(10);
                 var newpassword = HashPassword(rdCode, user.salt);
-                if (user.emailValid == null)
+                if (String.IsNullOrWhiteSpace(user.emailValid))
                 {
                     var forgetpassworduser = new UserModel
                     {
@@ -270,7 +270,7 @@ public class UserService : IUserService
                         return new ResultViewModel("失敗");
                     }
 
-                    string forgettemplPath = Path.Combine("./EXmail/ForgetPassword.html");
+                    string forgettemplPath = Path.Combine("ForgetPassword.html");
                     if (!System.IO.File.Exists(forgettemplPath))
                     {
                         return new ResultViewModel("郵件模板不存在");
