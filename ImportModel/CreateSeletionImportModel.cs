@@ -2,7 +2,6 @@ namespace Job.ImportModel;
 
 public class CreateSeletionImportModel
 {
-    public int ts_id { get; set; }
     public string seletion { get; set; }
     public bool MBTI_I { get; set; } = false;
     public bool MBTI_E { get; set; } = false;

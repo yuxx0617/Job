@@ -2,7 +2,7 @@ using Job.Model;
 
 namespace Job.ViewModel;
 
-public class TestSeletionViewModel
+public class SeletionViewModel
 {
     public int ts_id { get; set; }
     public string seletion { get; set; }

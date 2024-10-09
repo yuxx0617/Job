@@ -68,12 +68,15 @@ builder.Services.Configure<appSetting>(builder.Configuration.GetSection("appSett
 
 // 註冊服務層
 builder.Services.AddScoped<Token>();
+builder.Services.AddScoped<TestService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITestService, TestService>();
+builder.Services.AddScoped<IUserAnswerService, UserAnswerService>();
 
 // 註冊 DAO 層
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<ITestDao, TestDao>();
+builder.Services.AddScoped<IUserAnswerDao, UserAnswerDao>();
 
 // 配置 Swagger
 builder.Services.AddSwaggerGen(c =>

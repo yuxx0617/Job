@@ -139,11 +139,11 @@ public class TestService : ITestService
     }
     #endregion
     #region 刪除題目
-    public ResultViewModel DeleteTest(DeleteTestImportModel deleteTest)
+    public ResultViewModel DeleteTest(int t_id)
     {
         try
         {
-            var test = _dao.GetTest(deleteTest.t_id);
+            var test = _dao.GetTest(t_id);
             if (test != null)
             {
                 var ts_ids = test.ts_idList.Split(',').Select(ts_id => ts_id.Trim()).Where(ts_id => !string.IsNullOrEmpty(test.ts_idList)).ToList();
@@ -155,7 +155,7 @@ public class TestService : ITestService
                     }
                 }
 
-                _dao.DeleteTest(deleteTest.t_id);
+                _dao.DeleteTest(t_id);
                 return new ResultViewModel() { };
             }
             else
@@ -194,11 +194,11 @@ public class TestService : ITestService
     }
     #endregion
     #region 取得單一題目
-    public ResultViewModel<TestViewModel> GetTest(GetTestImportModel getTest)
+    public ResultViewModel<TestViewModel> GetTest(int t_id)
     {
         try
         {
-            var test = _dao.GetTest(getTest.t_id);
+            var test = _dao.GetTest(t_id);
 
             var result = new TestViewModel
             {
@@ -322,14 +322,15 @@ public class TestService : ITestService
     }
     #endregion
     #region 取得題目的所有選項內容
-    public ResultViewModel<List<TestSeletionViewModel>> GetTestSeletion(GetTestSeletionImportModel getTestSeletion)
+    public ResultViewModel<List<SeletionViewModel>> GetTestSeletion(int t_id)
     {
         try
         {
-            var testseletion = _dao.GetTestSeletion(getTestSeletion.t_id);
+            var testseletion = _dao.GetTestSeletion(t_id);
 
-            var result = testseletion.Select(seletion => new TestSeletionViewModel
+            var result = testseletion.Select(seletion => new SeletionViewModel
             {
+                ts_id = seletion.ts_id,
                 seletion = seletion.seletion,
                 MBTI_I = seletion.MBTI_I,
                 MBTI_E = seletion.MBTI_E,
@@ -347,13 +348,47 @@ public class TestService : ITestService
                 HOL_S = seletion.HOL_S,
                 t_id = seletion.t_id,
             }).ToList();
-            return new ResultViewModel<List<TestSeletionViewModel>>() { result = result };
+            return new ResultViewModel<List<SeletionViewModel>>() { result = result };
         }
         catch (Exception ex)
         {
-            return new ResultViewModel<List<TestSeletionViewModel>>(ex.Message);
+            return new ResultViewModel<List<SeletionViewModel>>(ex.Message);
         }
     }
+    #endregion
+    #region 取得單一選項
+    public ResultViewModel<SeletionViewModel> GetSeletion(int ts_id)
+    {
+        try
+        {
+            var test = _dao.GetSeletion(ts_id);
 
+            var result = new SeletionViewModel
+            {
+                ts_id = test.ts_id,
+                seletion = test.seletion,
+                MBTI_I = test.MBTI_I,
+                MBTI_E = test.MBTI_E,
+                MBTI_F = test.MBTI_F,
+                MBTI_T = test.MBTI_T,
+                MBTI_N = test.MBTI_N,
+                MBTI_S = test.MBTI_S,
+                MBTI_P = test.MBTI_P,
+                MBTI_J = test.MBTI_J,
+                HOL_A = test.HOL_A,
+                HOL_C = test.HOL_C,
+                HOL_E = test.HOL_E,
+                HOL_I = test.HOL_I,
+                HOL_R = test.HOL_R,
+                HOL_S = test.HOL_S,
+                t_id = test.t_id,
+            };
+            return new ResultViewModel<SeletionViewModel>() { result = result };
+        }
+        catch (Exception ex)
+        {
+            return new ResultViewModel<SeletionViewModel>(ex.Message) { };
+        }
+    }
     #endregion
 }

@@ -32,7 +32,7 @@ public class TestController : ControllerBase
     [HttpDelete(nameof(DeleteTest))]
     public IActionResult DeleteTest(DeleteTestImportModel deleteTest)
     {
-        var result = _service.DeleteTest(deleteTest);
+        var result = _service.DeleteTest(deleteTest.t_id);
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
@@ -72,7 +72,7 @@ public class TestController : ControllerBase
     [HttpGet(nameof(GetTest))]
     public IActionResult GetTest(GetTestImportModel getTest)
     {
-        var result = _service.GetTest(getTest);
+        var result = _service.GetTest(getTest.t_id);
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
@@ -80,7 +80,7 @@ public class TestController : ControllerBase
     [HttpGet(nameof(GetTestSeletion))]
     public IActionResult GetTestSeletion(GetTestSeletionImportModel getTestSeletion)
     {
-        var result = _service.GetTestSeletion(getTestSeletion);
+        var result = _service.GetTestSeletion(getTestSeletion.t_id);
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
