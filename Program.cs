@@ -66,6 +66,9 @@ builder.Services
 // 配置 appSettings 從配置文件中讀取
 builder.Services.Configure<appSetting>(builder.Configuration.GetSection("appSettings"));
 
+//配置 
+builder.Services.AddHttpClient<ExternalApiService>();
+
 // 註冊服務層
 builder.Services.AddScoped<Token>();
 builder.Services.AddScoped<TestService>();
