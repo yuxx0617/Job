@@ -218,7 +218,7 @@ public class UserService : IUserService
             {
                 if (HashPassword(login.password, user.salt) == user.password)
                 {
-                    if (String.IsNullOrWhiteSpace(login.emailValid))
+                    if (String.IsNullOrWhiteSpace(user.emailValid))
                     {
                         if (!_dao.LoginDay(user))
                         {
