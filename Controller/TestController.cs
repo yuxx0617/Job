@@ -69,7 +69,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
-    [HttpGet(nameof(GetTest))]
+    [HttpPost(nameof(GetTest))]
     public IActionResult GetTest(GetTestImportModel getTest)
     {
         var result = _service.GetTest(getTest.t_id);
@@ -77,7 +77,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
-    [HttpGet(nameof(GetTestSeletion))]
+    [HttpPost(nameof(GetTestSeletion))]
     public IActionResult GetTestSeletion(GetTestSeletionImportModel getTestSeletion)
     {
         var result = _service.GetTestSeletion(getTestSeletion.t_id);
