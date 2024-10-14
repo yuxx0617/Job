@@ -349,17 +349,37 @@ public class UserService : IUserService
         try
         {
             var user = _dao.GetUser(editUser.account);
-            var updateInfoModel = new UserModel
+            var updateInfoModel = new UserModel();
+
+            if (editUser.password != null)
             {
-                account = editUser.account,
-                password = HashPassword(editUser.password ?? user.password, user.salt),
-                name = editUser.name ?? user.name,
-                address = editUser.address ?? user.address,
-                phone = editUser.phone ?? user.phone,
-                edu = editUser.edu ?? user.edu,
-                sex = editUser.sex ?? user.sex,
-                birth = editUser.birth ?? user.birth,
-            };
+                updateInfoModel = new UserModel
+                {
+                    account = editUser.account,
+                    password = HashPassword(editUser.password, user.salt),
+                    name = editUser.name ?? user.name,
+                    address = editUser.address ?? user.address,
+                    phone = editUser.phone ?? user.phone,
+                    edu = editUser.edu ?? user.edu,
+                    sex = editUser.sex ?? user.sex,
+                    birth = editUser.birth ?? user.birth,
+                };
+            }
+            else
+            {
+                updateInfoModel = new UserModel
+                {
+                    account = editUser.account,
+                    password = user.password,
+                    name = editUser.name ?? user.name,
+                    address = editUser.address ?? user.address,
+                    phone = editUser.phone ?? user.phone,
+                    edu = editUser.edu ?? user.edu,
+                    sex = editUser.sex ?? user.sex,
+                    birth = editUser.birth ?? user.birth,
+                };
+            }
+
             if (!_dao.EditUser(updateInfoModel))
             {
                 return new ResultViewModel("失敗");
