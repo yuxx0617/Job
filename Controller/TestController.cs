@@ -41,7 +41,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize]
     [HttpGet(nameof(TestList))]
     public IActionResult TestList()
     {

@@ -51,6 +51,7 @@ public class UserAnswerService : IUserAnswerService
                 account = this.account,
             };
             var answer = _dao.CreateAnswer(createanswer);
+
             CountGood1(answer.ua_id);
             CountGood2(answer.ua_id);
             CountGood3(answer.ua_id);
@@ -62,7 +63,7 @@ public class UserAnswerService : IUserAnswerService
             {
                 ua_id = answer.ua_id,
             };
-            return new ResultViewModel<AnswerIdViewModel>() { };
+            return new ResultViewModel<AnswerIdViewModel>() { result = result };
         }
         catch (Exception ex)
         {
