@@ -17,6 +17,38 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5173") // 允許前端的來源
+                   .AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .AllowCredentials(); // 如果你需要傳遞驗證憑證，如 cookies 或 HTTP 身份驗證
+        });
+});
+
+
+// 配置資料庫
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDB")));
+
+builder.Services.Configure<appSetting>(builder.Configuration.GetSection("appSettings"));
+
+// 註冊 Service 層
+builder.Services.AddScoped<Token>();
+builder.Services.AddScoped<TestService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITestService, TestService>();
+builder.Services.AddScoped<IUserAnswerService, UserAnswerService>();
+
+// 註冊 DAO 層
+builder.Services.AddScoped<IUserDao, UserDao>();
+builder.Services.AddScoped<ITestDao, TestDao>();
+builder.Services.AddScoped<IUserAnswerDao, UserAnswerDao>();
+builder.Services.AddScoped<IExternalApiDao, ExternalApiDao>();
+
 // 啟用 HTTP 上下文存取
 builder.Services.AddHttpContextAccessor();
 // CORS 設定
@@ -38,25 +70,6 @@ builder.Services.AddCors(options =>
               .AllowCredentials(); // 允許發送憑證
     });
 });
-
-// 配置資料庫
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDB")));
-
-builder.Services.Configure<appSetting>(builder.Configuration.GetSection("appSettings"));
-
-// 註冊 Service 層
-builder.Services.AddScoped<Token>();
-builder.Services.AddScoped<TestService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ITestService, TestService>();
-builder.Services.AddScoped<IUserAnswerService, UserAnswerService>();
-
-// 註冊 DAO 層
-builder.Services.AddScoped<IUserDao, UserDao>();
-builder.Services.AddScoped<ITestDao, TestDao>();
-builder.Services.AddScoped<IUserAnswerDao, UserAnswerDao>();
-builder.Services.AddScoped<IExternalApiDao, ExternalApiDao>();
 
 // 配置 JWT 驗證
 builder.Services
@@ -118,6 +131,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/static"
 });
 
+app.UseCors("AllowSpecificOrigin");
 app.UseRouting();
 
 app.UseAuthentication();
