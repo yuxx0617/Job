@@ -21,6 +21,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDB")));
 
+builder.Services.Configure<appSetting>(builder.Configuration.GetSection("appSettings"));
+
 // 註冊 Service 層
 builder.Services.AddScoped<Token>();
 builder.Services.AddScoped<TestService>();
