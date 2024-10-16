@@ -1,6 +1,5 @@
 using Job.ImportModel;
 using Job.Service.Interface;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,7 +47,7 @@ public class UserController : ControllerBase
         return BadRequest(result);
     }
     [HttpPut(nameof(EditUser))]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public IActionResult EditUser(EditUserImportModel editUser)
     {
         var result = _service.EditUser(editUser);

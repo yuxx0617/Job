@@ -1,5 +1,6 @@
 using Job.ImportModel;
 using Job.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Job.Controller;
@@ -13,7 +14,7 @@ public class UserAnswerController : ControllerBase
     {
         _service = service;
     }
-
+    [Authorize]
     [HttpPost(nameof(CreateAnswerAndCount))]
     public IActionResult CreateAnswerAndCount(CreateAnswerImportModel createAnswer)
     {
@@ -22,6 +23,7 @@ public class UserAnswerController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize]
     [HttpPost(nameof(GetAnswerResult))]
     public IActionResult GetAnswerResult(CountGradeImportModel countGrade)
     {
@@ -30,6 +32,7 @@ public class UserAnswerController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize]
     [HttpGet(nameof(AnswerResultList))]
     public IActionResult AnswerResultList()
     {

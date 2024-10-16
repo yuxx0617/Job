@@ -11,7 +11,7 @@ public class Token
 
     public string GenerateToken(UserModel user)
     {
-        string issuer = "JwtAuthDemo";
+        string issuer = "Job";
         string signKey = "ababababab@cdcdcdcdcd@efefefefef"; // 更新後的密鑰，長度為 32 字節或更多
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signKey));

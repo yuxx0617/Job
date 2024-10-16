@@ -1,5 +1,6 @@
 using Job.ImportModel;
 using Job.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Job.Controller;
@@ -13,6 +14,7 @@ public class TestController : ControllerBase
     {
         _service = service;
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost(nameof(CreateTest))]
     public IActionResult CreateTest(CreateTestImportModel createTest)
     {
@@ -21,6 +23,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut(nameof(EditTest))]
     public IActionResult EditTest(EditTestImportModel editTest)
     {
@@ -29,6 +32,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete(nameof(DeleteTest))]
     public IActionResult DeleteTest(DeleteTestImportModel deleteTest)
     {
@@ -37,6 +41,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet(nameof(TestList))]
     public IActionResult TestList()
     {
@@ -45,6 +50,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost(nameof(CreateSeletion))]
     public IActionResult CreateSeletion(CreateSeletionImportModel createSeletion)
     {
@@ -53,6 +59,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut(nameof(EditSeletion))]
     public IActionResult EditSeletion(EditSeletionImportModel editSeletion)
     {
@@ -61,6 +68,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete(nameof(DeleteSeletion))]
     public IActionResult DeleteSeletion(DeleteSeletionImportModel deleteSeletion)
     {
@@ -69,6 +77,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize]
     [HttpPost(nameof(GetTest))]
     public IActionResult GetTest(GetTestImportModel getTest)
     {
@@ -77,6 +86,7 @@ public class TestController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize]
     [HttpPost(nameof(GetTestSeletion))]
     public IActionResult GetTestSeletion(GetTestSeletionImportModel getTestSeletion)
     {
