@@ -5,42 +5,45 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
-namespace backend.util
+namespace Job.util
 {
-    public class tokenEnCode
+    namespace Job.util
     {
-        private readonly HttpContext _HttpContext;
-        private HttpRequest _Request;
-        private string _Token;
-
-        public tokenEnCode(HttpContext HttpContext)
+        public class tokenEnCode
         {
-            this._HttpContext = HttpContext ??
-                throw new ArgumentNullException(nameof(HttpContext));
+            private readonly HttpContext _HttpContext;
+            private HttpRequest _Request;
+            private string _Token;
 
-            this._Request = this._HttpContext.Request;
-            this._Token = _Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-        }
+            public tokenEnCode(HttpContext HttpContext)
+            {
+                this._HttpContext = HttpContext ??
+                    throw new ArgumentNullException(nameof(HttpContext));
 
-        public Dictionary<string, object> GetHeader()
-        {
-            string[] JwtArr = (this._Token != null) ? this._Token.Split('.') : null;
-            var Header = (JwtArr != null) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(JwtArr[0])) : null;
+                this._Request = this._HttpContext.Request;
+                this._Token = _Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            }
 
-            return Header;
-        }
-
-        public Dictionary<string, object> GetPayLoad()
-        {
-            try
+            public Dictionary<string, object> GetHeader()
             {
                 string[] JwtArr = (this._Token != null) ? this._Token.Split('.') : null;
-                var PayLoad = (JwtArr != null) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(JwtArr[1])) : null;
-                return PayLoad;
+                var Header = (JwtArr != null) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(JwtArr[0])) : null;
+
+                return Header;
             }
-            catch
+
+            public Dictionary<string, object> GetPayLoad()
             {
-                return null;
+                try
+                {
+                    string[] JwtArr = (this._Token != null) ? this._Token.Split('.') : null;
+                    var PayLoad = (JwtArr != null) ? JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(JwtArr[1])) : null;
+                    return PayLoad;
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
     }

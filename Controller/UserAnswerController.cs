@@ -14,29 +14,28 @@ public class UserAnswerController : ControllerBase
         _service = service;
     }
 
-    [HttpPost(nameof(CreateAnswer))]
-    public IActionResult CreateAnswer(CreateAnswerImportModel createAnswer)
+    [HttpPost(nameof(CreateAnswerAndCount))]
+    public IActionResult CreateAnswerAndCount(CreateAnswerImportModel createAnswer)
     {
-        var result = _service.CreateAnswer(createAnswer);
+        var result = _service.CreateAnswerAndCount(createAnswer);
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
     }
-    [HttpPost(nameof(CountGrade))]
-    public IActionResult CountGrade(CountGradeImportModel countGrade)
+    [HttpPost(nameof(GetAnswerResult))]
+    public IActionResult GetAnswerResult(CountGradeImportModel countGrade)
     {
-        var result = _service.CountGrade(countGrade.ua_id);
+        var result = _service.GetAnswerResult(countGrade.ua_id);
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
     }
-    [HttpPost(nameof(CreateJob))]
-    public IActionResult CreateJob(CreateJobImportModel createJob)
+    [HttpGet(nameof(AnswerResultList))]
+    public IActionResult AnswerResultList()
     {
-        var result = _service.CreateJob(createJob);
+        var result = _service.AnswerResultList();
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
     }
-
 }

@@ -5,7 +5,7 @@ namespace Job.Service.Interface;
 
 public interface IUserAnswerService
 {
-    ResultViewModel CreateAnswer(CreateAnswerImportModel createAnswer);
-    ResultViewModel<AnswerViewModel> CountGrade(int ua_id);
-    ResultViewModel CreateJob(CreateJobImportModel createJob);
+    ResultViewModel<AnswerIdViewModel> CreateAnswerAndCount(CreateAnswerImportModel createAnswer);
+    ResultViewModel<AnswerViewModel> GetAnswerResult(int ua_id);
+    ResultViewModel<List<AnswerViewModel>> AnswerResultList();
 }

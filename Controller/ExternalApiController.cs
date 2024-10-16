@@ -1,76 +1,46 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BusinessController : ControllerBase
+public class ExternalApiController : ControllerBase
 {
     private readonly ExternalApiService _service;
 
-    public BusinessController(ExternalApiService service)
+    public ExternalApiController(ExternalApiService service)
     {
         _service = service;
     }
 
-    [HttpGet(nameof(GetCompanyData))]
-    public async Task<IActionResult> GetCompanyData()
+    [HttpGet(nameof(UpdateCompanyDisbandType))]
+    public async Task<IActionResult> UpdateCompanyDisbandType()
     {
-        var result = await _service.GetCompanyData();
+        var result = await _service.UpdateCompanyDisbandType();
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
     }
-    [HttpGet(nameof(GetBranchCompanyData))]
-    public async Task<IActionResult> GetBranchCompanyData()
+    [HttpGet(nameof(UpdateBranchCompanyAbolishType))]
+    public async Task<IActionResult> UpdateBranchCompanyAbolishType()
     {
-        var result = await _service.GetBranchCompanyData();
+        var result = await _service.UpdateBranchCompanyAbolishType();
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
     }
-    [HttpGet(nameof(GetForeignCompanyData))]
-    public async Task<IActionResult> GetForeignCompanyData()
+    [HttpGet(nameof(UpdateStopBusinessType))]
+    public async Task<IActionResult> UpdateStopBusinessType()
     {
-        var result = await _service.GetForeignCompanyData();
+        var result = await _service.UpdateStopBusinessType();
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
     }
-    [HttpGet(nameof(GetBusinessData))]
-    public async Task<IActionResult> GetBusinessData()
+    [Authorize]
+    [HttpGet(nameof(UpdateVacanciesData))]
+    public async Task<IActionResult> UpdateVacanciesData()
     {
-        var result = await _service.GetBusinessData();
-        if (result.isSuccess)
-            return Ok(result);
-        return BadRequest(result);
-    }
-    [HttpGet(nameof(GetCompanyDisbandData))]
-    public async Task<IActionResult> GetCompanyDisbandData()
-    {
-        var result = await _service.GetCompanyDisbandData();
-        if (result.isSuccess)
-            return Ok(result);
-        return BadRequest(result);
-    }
-    [HttpGet(nameof(GetBranchCompanyAbolishData))]
-    public async Task<IActionResult> GetBranchCompanyAbolishData()
-    {
-        var result = await _service.GetBranchCompanyAbolishData();
-        if (result.isSuccess)
-            return Ok(result);
-        return BadRequest(result);
-    }
-    [HttpGet(nameof(GetStopBusinessData))]
-    public async Task<IActionResult> GetStopBusinessData()
-    {
-        var result = await _service.GetStopBusinessData();
-        if (result.isSuccess)
-            return Ok(result);
-        return BadRequest(result);
-    }
-    [HttpGet(nameof(GetLtdDisbandData))]
-    public async Task<IActionResult> GetLtdDisbandData()
-    {
-        var result = await _service.GetLtdDisbandData();
+        var result = await _service.UpdateVacanciesData();
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);

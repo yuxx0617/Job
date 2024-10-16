@@ -1,4 +1,4 @@
-using backend.util;
+using Job.util;
 using Job.Dao.Interface;
 using Job.ImportModel;
 using Job.Model;
@@ -8,6 +8,7 @@ using Job.ViewModel;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http.Abstractions;
 using OfficeOpenXml;
+using Job.util.Job.util;
 
 namespace Job.Service;
 
@@ -17,7 +18,7 @@ public class UserAnswerService : IUserAnswerService
     private readonly IUserAnswerDao _dao;
     private readonly appSetting _appSetting;
     private string account;
-    private bool role;
+    private string role;
     private IHttpContextAccessor _HttpContextAccessor;
     public UserAnswerService(IUserAnswerDao dao, IOptions<appSetting> appSetting, IHttpContextAccessor HttpContextAccessor, TestService testService)
     {
@@ -30,10 +31,10 @@ public class UserAnswerService : IUserAnswerService
         tokenEnCode TokenEnCode = new tokenEnCode(HttpContextAccessor.HttpContext);
         var PayLoad = TokenEnCode.GetPayLoad();
         this.account = PayLoad["account"].ToString();
-        this.role = Convert.ToBoolean(PayLoad["role"]);
+        this.role = PayLoad["role"].ToString();
     }
-    #region 新增回答
-    public ResultViewModel CreateAnswer(CreateAnswerImportModel createAnswer)
+    #region 新增回答並計算
+    public ResultViewModel<AnswerIdViewModel> CreateAnswerAndCount(CreateAnswerImportModel createAnswer)
     {
         try
         {
@@ -49,27 +50,33 @@ public class UserAnswerService : IUserAnswerService
                 testTime = DateTime.Parse(today),
                 account = this.account,
             };
-            _dao.CreateAnswer(createanswer);
-            return new ResultViewModel() { };
+            var answer = _dao.CreateAnswer(createanswer);
+            CountGood1(answer.ua_id);
+            CountGood2(answer.ua_id);
+            CountGood3(answer.ua_id);
+            CountBad1(answer.ua_id);
+            CountBad2(answer.ua_id);
+            CountBad3(answer.ua_id);
+            CountResult(answer.ua_id);
+            var result = new AnswerIdViewModel
+            {
+                ua_id = answer.ua_id,
+            };
+            return new ResultViewModel<AnswerIdViewModel>() { };
         }
         catch (Exception ex)
         {
-            return new ResultViewModel(ex.Message);
+            return new ResultViewModel<AnswerIdViewModel>(ex.Message);
         }
     }
     #endregion
-    #region 計算並取得分數
-    public ResultViewModel<AnswerViewModel> CountGrade(int ua_id)
+    #region 取得測驗結果
+    public ResultViewModel<AnswerViewModel> GetAnswerResult(int ua_id)
     {
         try
         {
-            CountGood1(ua_id);
-            CountGood2(ua_id);
-            CountGood3(ua_id);
-            CountBad1(ua_id);
-            CountBad2(ua_id);
-            CountBad3(ua_id);
-            CountResult(ua_id);
+
+
             var answer = _dao.GetAnswer(ua_id);
 
             var result = new AnswerViewModel
@@ -109,7 +116,52 @@ public class UserAnswerService : IUserAnswerService
         }
     }
     #endregion
+    #region 測驗結果列表
+    public ResultViewModel<List<AnswerViewModel>> AnswerResultList()
+    {
+        try
+        {
 
+
+            var answerlist = _dao.AnswerList();
+
+            var result = answerlist.Select(answer => new AnswerViewModel
+            {
+                ua_id = answer.ua_id,
+                ua_goodList1 = answer.ua_goodList1,
+                ua_goodList2 = answer.ua_goodList2,
+                ua_goodList3 = answer.ua_goodList3,
+                ua_badList1 = answer.ua_badList1,
+                ua_badList2 = answer.ua_badList2,
+                ua_badList3 = answer.ua_badList3,
+                testTime = answer.testTime,
+                account = answer.account,
+                MBTI_Result = answer.MBTI_Result,
+                HOL_Result = answer.HOL_Result,
+                test_Result = answer.test_Result,
+                count_MBTI_E = answer.count_MBTI_E,
+                count_MBTI_F = answer.count_MBTI_F,
+                count_MBTI_I = answer.count_MBTI_I,
+                count_MBTI_J = answer.count_MBTI_J,
+                count_MBTI_N = answer.count_MBTI_N,
+                count_MBTI_P = answer.count_MBTI_P,
+                count_MBTI_S = answer.count_MBTI_S,
+                count_MBTI_T = answer.count_MBTI_T,
+                count_HOL_A = answer.count_HOL_A,
+                count_HOL_C = answer.count_HOL_C,
+                count_HOL_E = answer.count_HOL_E,
+                count_HOL_I = answer.count_HOL_I,
+                count_HOL_R = answer.count_HOL_R,
+                count_HOL_S = answer.count_HOL_S,
+            }).ToList();
+            return new ResultViewModel<List<AnswerViewModel>>() { result = result };
+        }
+        catch (Exception ex)
+        {
+            return new ResultViewModel<List<AnswerViewModel>>(ex.Message) { };
+        }
+    }
+    #endregion
     #region 計算並更新選項分數
     public ResultViewModel CountGood1(int ua_id)
     {
@@ -605,96 +657,6 @@ public class UserAnswerService : IUserAnswerService
         catch (Exception ex)
         {
             return new ResultViewModel(ex.Message);
-        }
-    }
-    #endregion
-    #region 新增工作
-    public ResultViewModel CreateJob(CreateJobImportModel createJob)
-    {
-        try
-        {
-            if (createJob.file != null && createJob.file.Length > 0)
-            {
-                string fileExtension = Path.GetExtension(createJob.file.FileName).ToLower();
-                if (fileExtension == ".xlsx" || fileExtension == ".xls")
-                {
-                    var filePath = Path.GetTempFileName();
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        createJob.file.CopyTo(stream);
-                    }
-
-                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                    List<JobModel> jobs = new List<JobModel>();
-
-                    using (var package = new ExcelPackage(new FileInfo(filePath)))
-                    {
-                        var worksheet = package.Workbook.Worksheets[0];
-
-                        if (worksheet == null)
-                        {
-                            throw new Exception("Excel檔案中無工作表");
-                        }
-
-                        for (int row = 2; row <= worksheet.Dimension.Rows; row++)
-                        {
-                            var job = new JobModel
-                            {
-                                name = worksheet.Cells[row, 1].Value?.ToString(),
-                                MBTI = worksheet.Cells[row, 2].Value?.ToString(),
-                                HOL = worksheet.Cells[row, 3].Value?.ToString(),
-                            };
-
-                            if (!string.IsNullOrEmpty(job.name))
-                            {
-                                jobs.Add(job);
-                                _dao.CreateJob(job);
-                            }
-                        }
-                    }
-
-                    File.Delete(filePath);
-
-                    return new ResultViewModel() { };
-                }
-                else
-                {
-                    return new ResultViewModel("文件不是有效的 Excel 檔案") { };
-                }
-            }
-            else
-            {
-                return new ResultViewModel("未提供檔案") { };
-            }
-        }
-        catch (Exception ex)
-        {
-            return new ResultViewModel(ex.Message) { };
-        }
-    }
-
-
-    #endregion
-    #region 取得單一工作
-    public ResultViewModel<JobViewModel> GetJob(int j_id)
-    {
-        try
-        {
-            var job = _dao.GetJob(j_id);
-
-            var result = new JobViewModel
-            {
-                j_id = job.j_id,
-                name = job.name,
-                MBTI = job.MBTI,
-                HOL = job.HOL,
-            };
-            return new ResultViewModel<JobViewModel>() { result = result };
-        }
-        catch (Exception ex)
-        {
-            return new ResultViewModel<JobViewModel>(ex.Message) { };
         }
     }
     #endregion

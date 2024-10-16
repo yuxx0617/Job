@@ -11,4 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<SeletionModel> Seletion { get; set; }
     public DbSet<UserAnswerModel> UserAnswer { get; set; }
     public DbSet<JobModel> Job { get; set; }
+    public DbSet<TypeStatusModel> TypeStatus { get; set; }
+    public DbSet<VacancieModel> Vacancie { get; set; }
+
 }

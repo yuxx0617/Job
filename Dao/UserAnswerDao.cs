@@ -1,6 +1,7 @@
 using Job.AppDBContext;
 using Job.Dao.Interface;
 using Job.Model;
+using Job.ViewModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Job.Dao;
@@ -14,11 +15,13 @@ public class UserAnswerDao : IUserAnswerDao
         _context = context;
     }
     #region 新增回答
-    public void CreateAnswer(UserAnswerModel userAnswerModel)
+    public UserAnswerModel CreateAnswer(UserAnswerModel userAnswerModel)
     {
         _context.UserAnswer.Add(userAnswerModel);
         _context.SaveChanges();
+        return userAnswerModel;
     }
+
     #endregion
     #region 更新分數
     public void UpdateGrade(UserAnswerModel userAnswerModel)
@@ -59,7 +62,7 @@ public class UserAnswerDao : IUserAnswerDao
         }
     }
     #endregion
-    #region 更新分數
+    #region 更新結果
     public void UpdateResult(UserAnswerModel userAnswerModel)
     {
         var answer = _context.UserAnswer.FirstOrDefault(a => a.ua_id == userAnswerModel.ua_id);
@@ -76,23 +79,16 @@ public class UserAnswerDao : IUserAnswerDao
         }
     }
     #endregion
-
-    #region 刪除題目
-    public void DeleteTest(int id)
-    {
-        var testModel = _context.Test.FirstOrDefault(a => a.t_id == id);
-
-        if (testModel != null)
-        {
-            _context.Test.Remove(testModel);
-            _context.SaveChanges();
-        }
-    }
-    #endregion
-    #region 取得單次回答
+    #region 取得測驗回答
     public UserAnswerModel GetAnswer(int id)
     {
         return _context.UserAnswer.FirstOrDefault(a => a.ua_id == id);
+    }
+    #endregion
+    #region 取得測驗回答列表
+    public List<UserAnswerModel> AnswerList()
+    {
+        return _context.UserAnswer.ToList();
     }
     #endregion
     #region 更新題目選項
@@ -105,19 +101,6 @@ public class UserAnswerDao : IUserAnswerDao
             test.ts_idList = testModel.ts_idList;
             _context.SaveChanges();
         }
-    }
-    #endregion
-    #region 新增工作
-    public void CreateJob(JobModel jobModel)
-    {
-        _context.Job.Add(jobModel);
-        _context.SaveChanges();
-    }
-    #endregion
-    #region 取得單一工作
-    public JobModel GetJob(int id)
-    {
-        return _context.Job.FirstOrDefault(a => a.j_id == id);
     }
     #endregion
     #region 取得指定工作列表

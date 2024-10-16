@@ -9,4 +9,13 @@ public class JobModel
     public string name { get; set; }
     public string? MBTI { get; set; }
     public string? HOL { get; set; }
+    public string? oneDown { get; set; }
+    public string? oneTothree { get; set; }
+    public string? threeTofive { get; set; }
+    public string? fiveToten { get; set; }
+    public string? tenTofifteen { get; set; }
+    public string? fifteenUp { get; set; }
+    public string? skill { get; set; }
+    public string? certificate { get; set; }
+    public string? tool { get; set; }
 }
