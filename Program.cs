@@ -36,8 +36,27 @@ builder.Services.AddScoped<ITestDao, TestDao>();
 builder.Services.AddScoped<IUserAnswerDao, UserAnswerDao>();
 builder.Services.AddScoped<IExternalApiDao, ExternalApiDao>();
 
-// 註冊 IHttpContextAccessor 用於依賴注入
+// 啟用 HTTP 上下文存取
 builder.Services.AddHttpContextAccessor();
+// CORS 設定
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowOrigin").Value?.Split(',', StringSplitOptions.RemoveEmptyEntries);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        if (corsOrigins != null && corsOrigins.Contains("*"))
+        {
+            policy.SetIsOriginAllowed(_ => true); // 允許所有來源
+        }
+        else if (corsOrigins != null)
+        {
+            policy.WithOrigins(corsOrigins); // 允許特定的來源
+        }
+        policy.AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials(); // 允許發送憑證
+    });
+});
 
 // 配置 JWT 驗證
 builder.Services
