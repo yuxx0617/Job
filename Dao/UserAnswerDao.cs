@@ -88,7 +88,7 @@ public class UserAnswerDao : IUserAnswerDao
     #region 取得測驗回答列表
     public List<UserAnswerModel> AnswerList()
     {
-        return _context.UserAnswer.ToList();
+        return _context.UserAnswer.OrderByDescending(u => u.testTime).ToList();
     }
     #endregion
     #region 更新題目選項
@@ -106,7 +106,12 @@ public class UserAnswerDao : IUserAnswerDao
     #region 取得指定工作列表
     public List<JobModel> GetJobResult(string mbti, string holland)
     {
-        return _context.Job.Where(a => a.MBTI == mbti || a.HOL == holland).ToList();
+        var job = _context.Job.Where(a => a.MBTI == mbti && a.HOL == holland).ToList();
+        if (job.Count < 5)
+        {
+            job = _context.Job.Where(a => a.MBTI == mbti || a.HOL == holland).ToList();
+        }
+        return job;
     }
     #endregion
 }

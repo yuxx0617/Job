@@ -38,7 +38,7 @@ public class UserAnswerService : IUserAnswerService
     {
         try
         {
-            var today = DateTime.Now.ToString("yyyy-MM-dd");
+            var today = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             var createanswer = new UserAnswerModel
             {
                 ua_goodList1 = createAnswer.ua_goodList1,

@@ -42,12 +42,18 @@ builder.Services.AddScoped<TestService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITestService, TestService>();
 builder.Services.AddScoped<IUserAnswerService, UserAnswerService>();
+builder.Services.AddScoped<IExternalApiService, ExternalApiService>();
+builder.Services.AddScoped<IJobService, JobService>();
 
 // 註冊 DAO 層
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<ITestDao, TestDao>();
 builder.Services.AddScoped<IUserAnswerDao, UserAnswerDao>();
 builder.Services.AddScoped<IExternalApiDao, ExternalApiDao>();
+builder.Services.AddScoped<IJobDao, JobDao>();
+
+
+builder.Services.AddHttpClient();
 
 // 啟用 HTTP 上下文存取
 builder.Services.AddHttpContextAccessor();

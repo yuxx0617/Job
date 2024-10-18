@@ -1,3 +1,4 @@
+using Job.Service.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -5,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/[controller]")]
 public class ExternalApiController : ControllerBase
 {
-    private readonly ExternalApiService _service;
+    private readonly IExternalApiService _service;
 
-    public ExternalApiController(ExternalApiService service)
+    public ExternalApiController(IExternalApiService service)
     {
         _service = service;
     }
@@ -36,7 +37,6 @@ public class ExternalApiController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
-    [Authorize]
     [HttpGet(nameof(UpdateVacanciesData))]
     public async Task<IActionResult> UpdateVacanciesData()
     {

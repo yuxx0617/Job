@@ -13,5 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<JobModel> Job { get; set; }
     public DbSet<TypeStatusModel> TypeStatus { get; set; }
     public DbSet<VacancieModel> Vacancie { get; set; }
-
+    public DbSet<LessonModel> Lesson { get; set; }
+    public DbSet<CertificateModel> Certificate { get; set; }
+    public DbSet<SubsidyModel> Subsidy { get; set; }
 }
