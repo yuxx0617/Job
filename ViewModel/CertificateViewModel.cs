@@ -4,7 +4,6 @@ namespace Job.ViewModel;
 
 public class CertificateViewModel
 {
-    [Key]
     public int c_id { get; set; }
     public string name { get; set; }
     public string? rank { get; set; }

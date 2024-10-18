@@ -23,8 +23,12 @@ public class TestDao : ITestDao
     #region 編輯題目
     public void EditTest(TestModel testModel)
     {
-        _context.Test.Update(testModel);
-        _context.SaveChanges();
+        var existingJob = _context.Test.FirstOrDefault(t => t.t_id == testModel.t_id);
+        if (existingJob != null)
+        {
+            _context.Entry(testModel).State = EntityState.Modified;
+            _context.SaveChanges();
+        }
     }
     #endregion
     #region 取得指定題目

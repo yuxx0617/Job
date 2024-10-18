@@ -390,7 +390,7 @@ public class ExternalApiService : IExternalApiService
             var typeStatuss = _dao.TypeStatusList();
             var result = typeStatuss.Select(com => new TypeStatusViewModel
             {
-                c_id = com.c_id,
+                cs_id = com.cs_id,
                 businessNum = com.businessNum,
                 companyName = com.companyName,
                 companyStatus = com.companyStatus,
@@ -509,7 +509,7 @@ public class ExternalApiService : IExternalApiService
             var typeStatuss = _dao.TypeStatusList();
             var result = typeStatuss.Select(com => new TypeStatusViewModel
             {
-                c_id = com.c_id,
+                cs_id = com.cs_id,
                 businessNum = com.businessNum,
                 companyName = com.companyName,
                 companyStatus = com.companyStatus,
@@ -578,7 +578,7 @@ public class ExternalApiService : IExternalApiService
         try
         {
             // 設定日期範圍的起始日期（112年1月1日 -> 2023年1月1日）
-            var startDate = new DateTime(2024, 7, 21);
+            var startDate = new DateTime(2024, 9, 14);
             var today = DateTime.Now;
 
             // 將民國年轉換為字串
@@ -595,34 +595,44 @@ public class ExternalApiService : IExternalApiService
 
                 // 獲取公司解散資料，傳遞民國年格式的日期字串
                 var businessData = await GetStopBusinessData(formattedDate);
-
-                foreach (var business in businessData.result)
+                if (businessData != null)
                 {
-                    var businessType = await GetBusinessData(business.President_No);
-                    if (businessType.result.Count != 0)
+                    foreach (var business in businessData.result)
                     {
-                        foreach (var status in businessType.result)
+                        var businessType = await GetBusinessData(business.President_No);
+                        if (businessType.result.Count != 0)
                         {
-                            foreach (var type in status.Business_Item_Old)
+                            foreach (var status in businessType.result)
                             {
-                                var addModel = new TypeStatusModel()
+                                foreach (var type in status.Business_Item_Old)
                                 {
-                                    businessNum = business.President_No,
-                                    companyName = business.Business_Name,
-                                    companyStatus = business.Business_Current_Status_Desc,
-                                    businessType = type.Business_Item_Desc,
-                                    date = forDate
-                                };
-                                _dao.AddTypeStatusData(addModel);
+                                    var addModel = new TypeStatusModel()
+                                    {
+                                        businessNum = business.President_No,
+                                        companyName = business.Business_Name,
+                                        companyStatus = business.Business_Current_Status_Desc,
+                                        businessType = type.Business_Item_Desc,
+                                        date = forDate
+                                    };
+                                    _dao.AddTypeStatusData(addModel);
+                                }
                             }
                         }
+                        else
+                        {
+                            continue;
+                        }
                     }
+                }
+                else
+                {
+                    continue;
                 }
             }
             var typeStatuss = _dao.TypeStatusList();
             var result = typeStatuss.Select(com => new TypeStatusViewModel
             {
-                c_id = com.c_id,
+                cs_id = com.cs_id,
                 businessNum = com.businessNum,
                 companyName = com.companyName,
                 companyStatus = com.companyStatus,

@@ -4,7 +4,6 @@ namespace Job.ViewModel;
 
 public class LessonViewModel
 {
-    [Key]
     public int l_id { get; set; }
     public string name { get; set; }
     public string time { get; set; }

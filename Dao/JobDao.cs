@@ -41,8 +41,12 @@ public class JobDao : IJobDao
     #region 更新工作
     public void UpdateJobContent(JobModel jobModel)
     {
-        _context.Job.Update(jobModel);
-        _context.SaveChanges();
+        var existingJob = _context.Job.FirstOrDefault(j => j.j_id == jobModel.j_id);
+        if (existingJob != null)
+        {
+            _context.Entry(existingJob).CurrentValues.SetValues(jobModel);
+            _context.SaveChanges();
+        }
     }
     #endregion
     #region 新增課程

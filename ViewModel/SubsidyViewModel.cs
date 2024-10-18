@@ -4,7 +4,6 @@ namespace Job.ViewModel;
 
 public class SubsidyViewModel
 {
-    [Key]
     public int s_id { get; set; }
     public string name { get; set; }
     public int money { get; set; }

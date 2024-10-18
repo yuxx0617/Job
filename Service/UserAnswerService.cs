@@ -192,20 +192,20 @@ public class UserAnswerService : IUserAnswerService
                 foreach (var ts_id in good1)
                 {
                     var gooditem1 = _testService.GetSeletion(int.Parse(ts_id));
-                    if (gooditem1.result.MBTI_E) num_MBTI_E += 3;
-                    if (gooditem1.result.MBTI_I) num_MBTI_I += 3;
-                    if (gooditem1.result.MBTI_N) num_MBTI_N += 3;
-                    if (gooditem1.result.MBTI_S) num_MBTI_S += 3;
-                    if (gooditem1.result.MBTI_F) num_MBTI_F += 3;
-                    if (gooditem1.result.MBTI_T) num_MBTI_T += 3;
-                    if (gooditem1.result.MBTI_P) num_MBTI_P += 3;
-                    if (gooditem1.result.MBTI_J) num_MBTI_J += 3;
-                    if (gooditem1.result.HOL_A) num_HOL_A += 3;
-                    if (gooditem1.result.HOL_C) num_HOL_C += 3;
-                    if (gooditem1.result.HOL_E) num_HOL_E += 3;
-                    if (gooditem1.result.HOL_I) num_HOL_I += 3;
-                    if (gooditem1.result.HOL_R) num_HOL_R += 3;
-                    if (gooditem1.result.HOL_S) num_HOL_S += 3;
+                    if (gooditem1.result.MBTI_E) num_MBTI_E += 6;
+                    if (gooditem1.result.MBTI_I) num_MBTI_I += 6;
+                    if (gooditem1.result.MBTI_N) num_MBTI_N += 6;
+                    if (gooditem1.result.MBTI_S) num_MBTI_S += 6;
+                    if (gooditem1.result.MBTI_F) num_MBTI_F += 6;
+                    if (gooditem1.result.MBTI_T) num_MBTI_T += 6;
+                    if (gooditem1.result.MBTI_P) num_MBTI_P += 6;
+                    if (gooditem1.result.MBTI_J) num_MBTI_J += 6;
+                    if (gooditem1.result.HOL_A) num_HOL_A += 6;
+                    if (gooditem1.result.HOL_C) num_HOL_C += 6;
+                    if (gooditem1.result.HOL_E) num_HOL_E += 6;
+                    if (gooditem1.result.HOL_I) num_HOL_I += 6;
+                    if (gooditem1.result.HOL_R) num_HOL_R += 6;
+                    if (gooditem1.result.HOL_S) num_HOL_S += 6;
                 }
                 var updategrade = new UserAnswerModel()
                 {
@@ -264,20 +264,20 @@ public class UserAnswerService : IUserAnswerService
                 foreach (var ts_id in good2)
                 {
                     var gooditem2 = _testService.GetSeletion(int.Parse(ts_id));
-                    if (gooditem2.result.MBTI_E) num_MBTI_E += 2;
-                    if (gooditem2.result.MBTI_I) num_MBTI_I += 2;
-                    if (gooditem2.result.MBTI_N) num_MBTI_N += 2;
-                    if (gooditem2.result.MBTI_S) num_MBTI_S += 2;
-                    if (gooditem2.result.MBTI_F) num_MBTI_F += 2;
-                    if (gooditem2.result.MBTI_T) num_MBTI_T += 2;
-                    if (gooditem2.result.MBTI_P) num_MBTI_P += 2;
-                    if (gooditem2.result.MBTI_J) num_MBTI_J += 2;
-                    if (gooditem2.result.HOL_A) num_HOL_A += 2;
-                    if (gooditem2.result.HOL_C) num_HOL_C += 2;
-                    if (gooditem2.result.HOL_E) num_HOL_E += 2;
-                    if (gooditem2.result.HOL_I) num_HOL_I += 2;
-                    if (gooditem2.result.HOL_R) num_HOL_R += 2;
-                    if (gooditem2.result.HOL_S) num_HOL_S += 2;
+                    if (gooditem2.result.MBTI_E) num_MBTI_E += 5;
+                    if (gooditem2.result.MBTI_I) num_MBTI_I += 5;
+                    if (gooditem2.result.MBTI_N) num_MBTI_N += 5;
+                    if (gooditem2.result.MBTI_S) num_MBTI_S += 5;
+                    if (gooditem2.result.MBTI_F) num_MBTI_F += 5;
+                    if (gooditem2.result.MBTI_T) num_MBTI_T += 5;
+                    if (gooditem2.result.MBTI_P) num_MBTI_P += 5;
+                    if (gooditem2.result.MBTI_J) num_MBTI_J += 5;
+                    if (gooditem2.result.HOL_A) num_HOL_A += 5;
+                    if (gooditem2.result.HOL_C) num_HOL_C += 5;
+                    if (gooditem2.result.HOL_E) num_HOL_E += 5;
+                    if (gooditem2.result.HOL_I) num_HOL_I += 5;
+                    if (gooditem2.result.HOL_R) num_HOL_R += 5;
+                    if (gooditem2.result.HOL_S) num_HOL_S += 5;
                 }
                 var updategrade = new UserAnswerModel()
                 {
@@ -337,20 +337,20 @@ public class UserAnswerService : IUserAnswerService
                 foreach (var ts_id in good3)
                 {
                     var gooditem3 = _testService.GetSeletion(int.Parse(ts_id));
-                    if (gooditem3.result.MBTI_E) num_MBTI_E += 1;
-                    if (gooditem3.result.MBTI_I) num_MBTI_I += 1;
-                    if (gooditem3.result.MBTI_N) num_MBTI_N += 1;
-                    if (gooditem3.result.MBTI_S) num_MBTI_S += 1;
-                    if (gooditem3.result.MBTI_F) num_MBTI_F += 1;
-                    if (gooditem3.result.MBTI_T) num_MBTI_T += 1;
-                    if (gooditem3.result.MBTI_P) num_MBTI_P += 1;
-                    if (gooditem3.result.MBTI_J) num_MBTI_J += 1;
-                    if (gooditem3.result.HOL_A) num_HOL_A += 1;
-                    if (gooditem3.result.HOL_C) num_HOL_C += 1;
-                    if (gooditem3.result.HOL_E) num_HOL_E += 1;
-                    if (gooditem3.result.HOL_I) num_HOL_I += 1;
-                    if (gooditem3.result.HOL_R) num_HOL_R += 1;
-                    if (gooditem3.result.HOL_S) num_HOL_S += 1;
+                    if (gooditem3.result.MBTI_E) num_MBTI_E += 4;
+                    if (gooditem3.result.MBTI_I) num_MBTI_I += 4;
+                    if (gooditem3.result.MBTI_N) num_MBTI_N += 4;
+                    if (gooditem3.result.MBTI_S) num_MBTI_S += 4;
+                    if (gooditem3.result.MBTI_F) num_MBTI_F += 4;
+                    if (gooditem3.result.MBTI_T) num_MBTI_T += 4;
+                    if (gooditem3.result.MBTI_P) num_MBTI_P += 4;
+                    if (gooditem3.result.MBTI_J) num_MBTI_J += 4;
+                    if (gooditem3.result.HOL_A) num_HOL_A += 4;
+                    if (gooditem3.result.HOL_C) num_HOL_C += 4;
+                    if (gooditem3.result.HOL_E) num_HOL_E += 4;
+                    if (gooditem3.result.HOL_I) num_HOL_I += 4;
+                    if (gooditem3.result.HOL_R) num_HOL_R += 4;
+                    if (gooditem3.result.HOL_S) num_HOL_S += 4;
                 }
                 var updategrade = new UserAnswerModel()
                 {
