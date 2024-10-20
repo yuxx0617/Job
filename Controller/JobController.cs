@@ -62,6 +62,7 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize]
     [HttpGet(nameof(LessonList))]
     public IActionResult LessonList()
     {
@@ -70,6 +71,7 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize]
     [HttpGet(nameof(CertificateList))]
     public IActionResult CertificateList()
     {
@@ -78,6 +80,7 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize]
     [HttpGet(nameof(SubsidyList))]
     public IActionResult SubsidyList()
     {

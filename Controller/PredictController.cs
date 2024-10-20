@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/[controller]")]
 public class ExternalApiController : ControllerBase
 {
-    private readonly IExternalApiService _service;
+    private readonly IPredictService _service;
 
-    public ExternalApiController(IExternalApiService service)
+    public ExternalApiController(IPredictService service)
     {
         _service = service;
     }
@@ -41,6 +41,14 @@ public class ExternalApiController : ControllerBase
     public async Task<IActionResult> UpdateVacanciesData()
     {
         var result = await _service.UpdateVacanciesData();
+        if (result.isSuccess)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    [HttpPost(nameof(UpdatePredict))]
+    public IActionResult UpdatePredict()
+    {
+        var result = _service.UpdatePredict();
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);

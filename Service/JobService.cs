@@ -110,52 +110,127 @@ public class JobService : IJobService
     }
     #endregion
     #region 更新工作薪水技能
+    // public async Task<ResultViewModel> UpdateJobContent()
+    // {
+    //     try
+    //     {
+    //         var num = 0;
+    //         var joblist = _dao.JobList();
+    //         foreach (var id = [num] in joblist)
+    //         {
+    //             var url = $"http://127.0.0.1:5000/scrape?job={job.name}";
+
+    //             HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+    //             if (response.IsSuccessStatusCode)
+    //             {
+    //                 var jsonResponse = await response.Content.ReadAsStringAsync();
+    //                 var jobContentData = JsonConvert.DeserializeObject<JobContentViewModel>(jsonResponse);
+    //                 if (jobContentData != null)
+    //                 {
+    //                     var updatejob = new JobModel
+    //                     {
+    //                         j_id = job.j_id,
+    //                         name = job.name,
+    //                         MBTI = job.MBTI,
+    //                         HOL = job.HOL,
+    //                         oneDown = jobContentData.wageSet.oneDown ?? job.oneDown,
+    //                         oneTothree = jobContentData.wageSet.oneTothree ?? job.oneTothree,
+    //                         threeTofive = jobContentData.wageSet.threeTofive ?? job.threeTofive,
+    //                         fiveToten = jobContentData.wageSet.fiveToten ?? job.fiveToten,
+    //                         tenTofifteen = jobContentData.wageSet.tenTofifteen ?? job.tenTofifteen,
+    //                         fifteenUp = jobContentData.wageSet.fifteenUp ?? job.fifteenUp,
+    //                         skill = jobContentData.toolSet.skills ?? job.skill,
+    //                         certificate = jobContentData.toolSet.certificates ?? job.certificate,
+    //                         tool = jobContentData.toolSet.tools ?? job.tool
+    //                     };
+    //                     _dao.UpdateJobContent(updatejob);
+    //                 }
+    //             }
+    //             else
+    //             {
+    //                 return new ResultViewModel("API 請求失敗") { };
+    //             }
+    //         }
+    //         return new ResultViewModel() { };
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return new ResultViewModel(ex.Message) { };
+    //     }
+    // }
     public async Task<ResultViewModel> UpdateJobContent()
     {
         try
         {
             var joblist = _dao.JobList();
+            var totalJobs = joblist.Count;
+            var processedJobs = 0;
+            var successCount = 0;
+            var failureCount = 0;
+            var errorMessages = new List<string>();
+
             foreach (var job in joblist)
             {
-                var url = $"http://127.0.0.1:5000/scrape?job={job.name}";
-
-                HttpResponseMessage response = await _httpClient.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    var jobContentData = JsonConvert.DeserializeObject<JobContentViewModel>(jsonResponse);
-                    if (jobContentData != null)
+                    var url = $"http://127.0.0.1:5000/scrape?job={Uri.EscapeDataString(job.name)}";
+
+                    HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        var updatejob = new JobModel
+                        var jsonResponse = await response.Content.ReadAsStringAsync();
+                        var jobContentData = JsonConvert.DeserializeObject<JobContentViewModel>(jsonResponse);
+                        if (jobContentData != null)
                         {
-                            j_id = job.j_id,
-                            name = job.name,
-                            MBTI = job.MBTI,
-                            HOL = job.HOL,
-                            oneDown = jobContentData.wageSet.oneDown ?? job.oneDown,
-                            oneTothree = jobContentData.wageSet.oneTothree ?? job.oneTothree,
-                            threeTofive = jobContentData.wageSet.threeTofive ?? job.threeTofive,
-                            fiveToten = jobContentData.wageSet.fiveToten ?? job.fiveToten,
-                            tenTofifteen = jobContentData.wageSet.tenTofifteen ?? job.tenTofifteen,
-                            fifteenUp = jobContentData.wageSet.fifteenUp ?? job.fifteenUp,
-                            skill = jobContentData.toolSet.skills ?? job.skill,
-                            certificate = jobContentData.toolSet.certificates ?? job.certificate,
-                            tool = jobContentData.toolSet.tools ?? job.tool
-                        };
-                        _dao.UpdateJobContent(updatejob);
+                            var updatejob = new JobModel
+                            {
+                                j_id = job.j_id,
+                                name = job.name,
+                                MBTI = job.MBTI,
+                                HOL = job.HOL,
+                                oneDown = jobContentData.wageSet.oneDown ?? job.oneDown,
+                                oneTothree = jobContentData.wageSet.oneTothree ?? job.oneTothree,
+                                threeTofive = jobContentData.wageSet.threeTofive ?? job.threeTofive,
+                                fiveToten = jobContentData.wageSet.fiveToten ?? job.fiveToten,
+                                tenTofifteen = jobContentData.wageSet.tenTofifteen ?? job.tenTofifteen,
+                                fifteenUp = jobContentData.wageSet.fifteenUp ?? job.fifteenUp,
+                                skill = jobContentData.toolSet.skills ?? job.skill,
+                                certificate = jobContentData.toolSet.certificates ?? job.certificate,
+                                tool = jobContentData.toolSet.tools ?? job.tool
+                            };
+                            _dao.UpdateJobContent(updatejob);
+                            successCount++;
+                        }
+                        else
+                        {
+                            failureCount++;
+                            errorMessages.Add($"無法解析 j_id: {job.j_id} 的工作內容資料");
+                        }
+                    }
+                    else
+                    {
+                        failureCount++;
+                        errorMessages.Add($"API 請求失敗 (j_id: {job.j_id}): {response.StatusCode}");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    return new ResultViewModel("API 請求失敗") { };
+                    failureCount++;
+                    errorMessages.Add($"處理 j_id: {job.j_id} 時發生錯誤: {ex.Message}");
                 }
+
+                processedJobs++;
+                Console.WriteLine($"已處理 {processedJobs}/{totalJobs} 筆資料");
             }
+
+            var resultMessage = $"更新完成。成功: {successCount}, 失敗: {failureCount}";
             return new ResultViewModel() { };
         }
         catch (Exception ex)
         {
-            return new ResultViewModel(ex.Message) { };
+            return new ResultViewModel($"整體處理過程中發生錯誤: {ex.Message}") { };
         }
     }
     #endregion

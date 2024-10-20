@@ -44,6 +44,7 @@ builder.Services.AddScoped<ITestService, TestService>();
 builder.Services.AddScoped<IUserAnswerService, UserAnswerService>();
 builder.Services.AddScoped<IExternalApiService, ExternalApiService>();
 builder.Services.AddScoped<IJobService, JobService>();
+builder.Services.AddScoped<IPredictService, PredictService>();
 
 // 註冊 DAO 層
 builder.Services.AddScoped<IUserDao, UserDao>();
@@ -51,7 +52,7 @@ builder.Services.AddScoped<ITestDao, TestDao>();
 builder.Services.AddScoped<IUserAnswerDao, UserAnswerDao>();
 builder.Services.AddScoped<IExternalApiDao, ExternalApiDao>();
 builder.Services.AddScoped<IJobDao, JobDao>();
-
+builder.Services.AddScoped<IPredictDao, PredictDao>();
 
 builder.Services.AddHttpClient();
 

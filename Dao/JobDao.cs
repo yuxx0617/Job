@@ -35,7 +35,7 @@ public class JobDao : IJobDao
     #region 取得工作列表
     public List<JobModel> JobList()
     {
-        return _context.Job.ToList();
+        return _context.Job.OrderByDescending(j => j.j_id).ToList();
     }
     #endregion
     #region 更新工作

@@ -15,55 +15,20 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-public class ExternalApiService : IExternalApiService
+public class PredictService : IPredictService
 {
-    private readonly IExternalApiDao _dao;
+    private readonly IPredictDao _dao;
     private readonly HttpClient _httpClient;
     private readonly appSetting _appSetting;
 
 
-    public ExternalApiService(HttpClient httpClient, IOptions<appSetting> appSetting, IExternalApiDao dao)
+    public PredictService(HttpClient httpClient, IOptions<appSetting> appSetting, IPredictDao dao)
     {
         _httpClient = httpClient;
         _appSetting = appSetting.Value;
         _dao = dao;
     }
     #region 公司資料每日解散異動查詢
-    // public async Task<ResultViewModel<List<CompanyDisbandViewModel>>> GetCompanyDisbandData()
-    // {
-    //     try
-    //     {
-    //         var today = DateTime.Now;
-    //         var rocYear = today.Year - 1911;
-    //         var formattedDate = $"{rocYear}{today:MMdd}";
-
-    //         var url = $"https://data.gcis.nat.gov.tw/od/data/api/561D23B6-5EA7-4FF4-A78D-A617ED64BC64?$format=json&$filter=Change_Of_Approval_Data eq {formattedDate}&$skip=0&$top=500";
-
-    //         HttpResponseMessage response = await _httpClient.GetAsync(url);
-
-    //         if (response.IsSuccessStatusCode)
-    //         {
-    //             var jsonResponse = await response.Content.ReadAsStringAsync();
-    //             if (jsonResponse == null || !jsonResponse.Any())
-    //             {
-    //                 return new ResultViewModel<List<CompanyDisbandViewModel>>() { result = new List<CompanyDisbandViewModel>() };
-    //             }
-    //             else
-    //             {
-    //                 var companyData = JsonConvert.DeserializeObject<List<CompanyDisbandViewModel>>(jsonResponse);
-    //                 return new ResultViewModel<List<CompanyDisbandViewModel>>() { result = companyData };
-    //             }
-    //         }
-    //         else
-    //         {
-    //             return new ResultViewModel<List<CompanyDisbandViewModel>>("API 請求失敗") { };
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return new ResultViewModel<List<CompanyDisbandViewModel>>(ex.Message) { };
-    //     }
-    // }
     public async Task<ResultViewModel<List<CompanyDisbandViewModel>>> GetCompanyDisbandData(string formattedDate)
     {
         try
@@ -285,108 +250,45 @@ public class ExternalApiService : IExternalApiService
     }
     #endregion
     #region 查公司解散類別
-    // public async Task<ResultViewModel<List<TypeStatusViewModel>>> UpdateCompanyDisbandType()
-    // {
-    //     try
-    //     {
-    //                     var today = DateTime.Now;
-    // var rocYear = today.Year - 1911;
-    // var formattedDate = $"{rocYear}{today:MMdd}";
-    //         var companyData = await GetCompanyDisbandData();
-    //         foreach (var company in companyData.result)
-    //         {
-    //             var compamyType = await GetCompanyData(company.Business_Accounting_NO);
-    //             if (compamyType != null)
-    //             {
-    //                 foreach (var status in compamyType.result)
-    //                 {
-    //                     foreach (var type in status.Cmp_Business)
-    //                     {
-    //                         var addModel = new TypeStatusModel()
-    //                         {
-    //                             businessNum = company.Business_Accounting_NO,
-    //                             companyName = company.Company_Name,
-    //                             companyStatus = company.Company_Status_Desc,
-    //                             businessType = type.Business_Item_Desc,
-    //                             date = today
-    //                         };
-    //                         if (addModel != null)
-    //                         {
-    //                             _dao.AddTypeStatusData(addModel);
-    //                         }
-    //                         else
-    //                         {
-    //                             continue;
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         var typeStatuss = _dao.TypeStatusList();
-    //         var result = typeStatuss.Select(com => new TypeStatusViewModel
-    //         {
-    //             c_id = com.c_id,
-    //             businessNum = com.businessNum,
-    //             companyName = com.companyName,
-    //             companyStatus = com.companyStatus,
-    //             businessType = com.businessType,
-    //             date = com.date
-    //         }).ToList();
-
-    //         return new ResultViewModel<List<TypeStatusViewModel>>() { result = result };
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return new ResultViewModel<List<TypeStatusViewModel>>(ex.Message) { };
-    //     }
-    // }
     public async Task<ResultViewModel<List<TypeStatusViewModel>>> UpdateCompanyDisbandType()
     {
         try
         {
-            // 設定日期範圍的起始日期（112年1月1日 -> 2023年1月1日）
-            var startDate = new DateTime(2023, 6, 30);
             var today = DateTime.Now;
+            var currentRocYear = today.Year - 1911;
+            var formattedDate = $"{currentRocYear}{today:MMdd}";
+            var forDate = today.ToString("yyyyMMdd");
 
-            // 將民國年轉換為字串
-            var startRocYear = startDate.Year - 1911;
-            var todayRocYear = today.Year - 1911;
-
-            // 迴圈從 startDate 到 today，每天執行一次
-            for (var datetime = startDate; datetime <= today; datetime = datetime.AddDays(1))
+            var companyData = await GetCompanyDisbandData(formattedDate);
+            foreach (var company in companyData.result)
             {
-                // 轉換當前日期為民國年格式的字串，格式為 "yyyMMdd"
-                var currentRocYear = datetime.Year - 1911;
-                var formattedDate = $"{currentRocYear}{datetime:MMdd}";
-                var forDate = datetime.ToString("yyyyMMdd");
-
-                // 獲取公司解散資料，傳遞民國年格式的日期字串
-                var companyData = await GetCompanyDisbandData(formattedDate);
-
-                foreach (var company in companyData.result)
+                var compamyType = await GetCompanyData(company.Business_Accounting_NO);
+                if (compamyType != null)
                 {
-                    var compamyType = await GetCompanyData(company.Business_Accounting_NO);
-                    if (compamyType != null)
+                    foreach (var status in compamyType.result)
                     {
-                        foreach (var status in compamyType.result)
+                        foreach (var type in status.Cmp_Business)
                         {
-                            foreach (var type in status.Cmp_Business)
+                            var addModel = new TypeStatusModel()
                             {
-                                var addModel = new TypeStatusModel()
-                                {
-                                    businessNum = company.Business_Accounting_NO,
-                                    companyName = company.Company_Name,
-                                    companyStatus = company.Company_Status_Desc,
-                                    businessType = type.Business_Item_Desc,
-                                    date = forDate // 直接使用民國年格式的日期字串
-                                };
+                                businessNum = company.Business_Accounting_NO,
+                                companyName = company.Company_Name,
+                                companyStatus = company.Company_Status_Desc,
+                                businessType = type.Business_Item_Desc,
+                                date = forDate
+                            };
+                            if (addModel != null)
+                            {
                                 _dao.AddTypeStatusData(addModel);
+                            }
+                            else
+                            {
+                                continue;
                             }
                         }
                     }
                 }
             }
-
             var typeStatuss = _dao.TypeStatusList();
             var result = typeStatuss.Select(com => new TypeStatusViewModel
             {
@@ -407,100 +309,37 @@ public class ExternalApiService : IExternalApiService
     }
     #endregion
     #region 查分公司廢止類別
-    // public async Task<ResultViewModel<List<TypeStatusViewModel>>> UpdateBranchCompanyAbolishType()
-    // {
-    //     try
-    //     {
-    //         var today = DateTime.Now.ToString("yyyyMM");
-    //         var branchcompanyData = await GetBranchCompanyAbolishData();
-
-    //         foreach (var branchcompany in branchcompanyData.result)
-    //         {
-    //             var compamyType = await GetCompanyData(branchcompany.Business_Accounting_NO);
-    //             if (compamyType != null)
-    //             {
-    //                 foreach (var status in compamyType.result)
-    //                 {
-    //                     if (status != null)
-    //                     {
-    //                         foreach (var type in status.Cmp_Business)
-    //                         {
-    //                             var addModel = new TypeStatusModel()
-    //                             {
-    //                                 businessNum = branchcompany.Business_Accounting_NO,
-    //                                 companyName = branchcompany.Company_Name,
-    //                                 companyStatus = branchcompany.Branch_Office_Status_Desc,
-    //                                 businessType = type.Business_Item_Desc,
-    //                                 date = today
-    //                             };
-    //                             _dao.AddTypeStatusData(addModel);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         var typeStatuss = _dao.TypeStatusList();
-    //         var result = typeStatuss.Select(com => new TypeStatusViewModel
-    //         {
-    //             c_id = com.c_id,
-    //             businessNum = com.businessNum,
-    //             companyName = com.companyName,
-    //             companyStatus = com.companyStatus,
-    //             businessType = com.businessType,
-    //             date = com.date
-    //         }).ToList();
-    //         return new ResultViewModel<List<TypeStatusViewModel>>() { result = result };
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return new ResultViewModel<List<TypeStatusViewModel>>(ex.Message) { };
-
-    //     }
-    // }
     public async Task<ResultViewModel<List<TypeStatusViewModel>>> UpdateBranchCompanyAbolishType()
     {
         try
         {
-            // 設定日期範圍的起始日期（112年1月1日 -> 2023年1月1日）
-            var startDate = new DateTime(2024, 7, 21);
             var today = DateTime.Now;
+            var currentRocYear = today.Year - 1911;
+            var formattedDate = $"{currentRocYear}{today:MMdd}";
+            var forDate = today.ToString("yyyyMMdd");
 
-            // 將民國年轉換為字串
-            var startRocYear = startDate.Year - 1911;
-            var todayRocYear = today.Year - 1911;
+            var branchcompanyData = await GetBranchCompanyAbolishData(formattedDate);
 
-            // 迴圈從 startDate 到 today，每天執行一次
-            for (var datetime = startDate; datetime <= today; datetime = datetime.AddDays(1))
+            foreach (var branchcompany in branchcompanyData.result)
             {
-                // 轉換當前日期為民國年格式的字串，格式為 "yyyMMdd"
-                var currentRocYear = datetime.Year - 1911;
-                var formattedDate = $"{currentRocYear}{datetime:MMdd}";
-                var forDate = datetime.ToString("yyyyMMdd");
-
-                // 獲取公司解散資料，傳遞民國年格式的日期字串
-                var branchcompanyData = await GetBranchCompanyAbolishData(formattedDate);
-
-                foreach (var branchcompany in branchcompanyData.result)
+                var compamyType = await GetCompanyData(branchcompany.Business_Accounting_NO);
+                if (compamyType != null)
                 {
-                    var compamyType = await GetCompanyData(branchcompany.Business_Accounting_NO);
-                    if (compamyType != null)
+                    foreach (var status in compamyType.result)
                     {
-                        foreach (var status in compamyType.result)
+                        if (status != null)
                         {
-                            if (status != null)
+                            foreach (var type in status.Cmp_Business)
                             {
-                                foreach (var type in status.Cmp_Business)
+                                var addModel = new TypeStatusModel()
                                 {
-                                    var addModel = new TypeStatusModel()
-                                    {
-                                        businessNum = branchcompany.Business_Accounting_NO,
-                                        companyName = branchcompany.Company_Name,
-                                        companyStatus = branchcompany.Branch_Office_Status_Desc,
-                                        businessType = type.Business_Item_Desc,
-                                        date = forDate
-                                    };
-                                    _dao.AddTypeStatusData(addModel);
-                                }
+                                    businessNum = branchcompany.Business_Accounting_NO,
+                                    companyName = branchcompany.Company_Name,
+                                    companyStatus = branchcompany.Branch_Office_Status_Desc,
+                                    businessType = type.Business_Item_Desc,
+                                    date = forDate
+                                };
+                                _dao.AddTypeStatusData(addModel);
                             }
                         }
                     }
@@ -526,107 +365,37 @@ public class ExternalApiService : IExternalApiService
     }
     #endregion
     #region 查商業歇業類別
-    // public async Task<ResultViewModel<List<TypeStatusViewModel>>> UpdateStopBusinessType()
-    // {
-    //     try
-    //     {
-    //         var today = DateTime.Now.ToString("yyyyMM");
-    //         var businessData = await GetStopBusinessData();
-
-    //         foreach (var business in businessData.result)
-    //         {
-    //             var businessType = await GetBusinessData(business.President_No);
-    //             if (businessType.result.Count != 0)
-    //             {
-    //                 foreach (var status in businessType.result)
-    //                 {
-    //                     foreach (var type in status.Business_Item_Old)
-    //                     {
-    //                         var addModel = new TypeStatusModel()
-    //                         {
-    //                             businessNum = business.President_No,
-    //                             companyName = business.Business_Name,
-    //                             companyStatus = business.Business_Current_Status_Desc,
-    //                             businessType = type.Business_Item_Desc,
-    //                             date = today
-    //                         };
-    //                         _dao.AddTypeStatusData(addModel);
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         var typeStatuss = _dao.TypeStatusList();
-    //         var result = typeStatuss.Select(com => new TypeStatusViewModel
-    //         {
-    //             c_id = com.c_id,
-    //             businessNum = com.businessNum,
-    //             companyName = com.companyName,
-    //             companyStatus = com.companyStatus,
-    //             businessType = com.businessType,
-    //             date = com.date
-    //         }).ToList();
-
-    //         return new ResultViewModel<List<TypeStatusViewModel>>() { result = result };
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return new ResultViewModel<List<TypeStatusViewModel>>(ex.Message) { };
-    //     }
-    // }
     public async Task<ResultViewModel<List<TypeStatusViewModel>>> UpdateStopBusinessType()
     {
         try
         {
-            // 設定日期範圍的起始日期（112年1月1日 -> 2023年1月1日）
-            var startDate = new DateTime(2024, 9, 14);
             var today = DateTime.Now;
+            var currentRocYear = today.Year - 1911;
+            var formattedDate = $"{currentRocYear}{today:MMdd}";
+            var forDate = today.ToString("yyyyMMdd");
 
-            // 將民國年轉換為字串
-            var startRocYear = startDate.Year - 1911;
-            var todayRocYear = today.Year - 1911;
+            var businessData = await GetStopBusinessData(formattedDate);
 
-            // 迴圈從 startDate 到 today，每天執行一次
-            for (var datetime = startDate; datetime <= today; datetime = datetime.AddDays(1))
+            foreach (var business in businessData.result)
             {
-                // 轉換當前日期為民國年格式的字串，格式為 "yyyMMdd"
-                var currentRocYear = datetime.Year - 1911;
-                var formattedDate = $"{currentRocYear}{datetime:MMdd}";
-                var forDate = datetime.ToString("yyyyMMdd");
-
-                // 獲取公司解散資料，傳遞民國年格式的日期字串
-                var businessData = await GetStopBusinessData(formattedDate);
-                if (businessData != null)
+                var businessType = await GetBusinessData(business.President_No);
+                if (businessType.result.Count != 0)
                 {
-                    foreach (var business in businessData.result)
+                    foreach (var status in businessType.result)
                     {
-                        var businessType = await GetBusinessData(business.President_No);
-                        if (businessType.result.Count != 0)
+                        foreach (var type in status.Business_Item_Old)
                         {
-                            foreach (var status in businessType.result)
+                            var addModel = new TypeStatusModel()
                             {
-                                foreach (var type in status.Business_Item_Old)
-                                {
-                                    var addModel = new TypeStatusModel()
-                                    {
-                                        businessNum = business.President_No,
-                                        companyName = business.Business_Name,
-                                        companyStatus = business.Business_Current_Status_Desc,
-                                        businessType = type.Business_Item_Desc,
-                                        date = forDate
-                                    };
-                                    _dao.AddTypeStatusData(addModel);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            continue;
+                                businessNum = business.President_No,
+                                companyName = business.Business_Name,
+                                companyStatus = business.Business_Current_Status_Desc,
+                                businessType = type.Business_Item_Desc,
+                                date = forDate
+                            };
+                            _dao.AddTypeStatusData(addModel);
                         }
                     }
-                }
-                else
-                {
-                    continue;
                 }
             }
             var typeStatuss = _dao.TypeStatusList();
@@ -733,6 +502,46 @@ public class ExternalApiService : IExternalApiService
         catch (Exception ex)
         {
             return new ResultViewModel<List<VacancieViewModel>>(ex.Message) { };
+        }
+    }
+    #endregion
+    #region 抓職業每月數量並新增
+    public ResultViewModel UpdatePredict()
+    {
+        try
+        {
+            var today = DateTime.Now;
+            var typeList = new List<string> { "經營/行政/總務", "業務/貿易/銷售", "人資/法務/智財", "財務/金融/保險", "廣告/公關/設計",
+         "客服/門市" ,"工程/研發/生技","資訊/軟體/系統","品管/製造/環衛","技術/維修/操作","營建/製圖/施作","新聞/出版/印刷",
+         "傳播/娛樂/藝術","教育/學術/研究","物流/運輸/資材","旅遊/餐飲/休閒","醫療/美容/保健","保全/軍警消","清潔/家事/托育",
+         "農林漁牧相關","行銷/企劃/專案","其他職類"};
+
+            for (int i = 1; i <= 22; i++)
+            {
+
+                var vacancieResult = _dao.GetType().GetMethod($"VacancieList{i:D2}").Invoke(_dao, null) as IEnumerable<object>;
+                var vacancieFilter = vacancieResult.OfType<dynamic>().Where(v => v.date.Contains(today.ToString("yyyyMM")));
+
+                var companyResult = _dao.GetType().GetMethod($"TypeStatusList{i:D2}").Invoke(_dao, null) as IEnumerable<object>;
+                var companyFilter = companyResult.OfType<dynamic>().Where(v => v.date.Contains(today.ToString("yyyyMM")));
+
+                int vacancieAmount = vacancieFilter.Count();
+                int companyAmount = companyFilter.Count();
+
+                var createpredict = new PredictModel
+                {
+                    type = typeList[i - 1],
+                    c_amount = companyAmount,
+                    v_amount = vacancieAmount,
+                    date = today.ToString("yyyyMM")
+                };
+                _dao.CreatePredict(createpredict);
+            }
+            return new ResultViewModel() { };
+        }
+        catch (Exception ex)
+        {
+            return new ResultViewModel(ex.Message);
         }
     }
     #endregion
