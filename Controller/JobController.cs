@@ -14,6 +14,7 @@ public class JobController : ControllerBase
     {
         _service = service;
     }
+    [Authorize]
     [HttpPost(nameof(CreateJob))]
     public IActionResult CreateJob(CreateFileImportModel createJob)
     {
@@ -22,6 +23,7 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize]
     [HttpPost(nameof(GetJob))]
     public IActionResult GetJob(GetJobImportModel getJob)
     {
@@ -38,6 +40,7 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost(nameof(CreateLesson))]
     public IActionResult CreateLesson(CreateFileImportModel createLesson)
     {
@@ -46,6 +49,7 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost(nameof(CreateCertificate))]
     public IActionResult CreateCertificate(CreateFileImportModel createCertificate)
     {
@@ -54,6 +58,7 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost(nameof(CreateSubsidy))]
     public IActionResult CreateSubsidy(CreateFileImportModel createSubsidy)
     {

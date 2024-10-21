@@ -17,4 +17,5 @@ public class AppDbContext : DbContext
     public DbSet<CertificateModel> Certificate { get; set; }
     public DbSet<SubsidyModel> Subsidy { get; set; }
     public DbSet<PredictModel> Predict { get; set; }
+    public DbSet<ActRecordModel> ActRecord { get; set; }
 }

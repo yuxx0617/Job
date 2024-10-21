@@ -64,6 +64,7 @@ public class UserController : ControllerBase
         return BadRequest(result);
     }
     [HttpGet(nameof(UserList))]
+    [Authorize(Policy = "AdminOnly")]
     public IActionResult UserList()
     {
         var result = _service.UserList();

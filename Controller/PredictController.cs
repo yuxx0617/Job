@@ -45,7 +45,7 @@ public class ExternalApiController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
-    [HttpPost(nameof(UpdatePredict))]
+    [HttpGet(nameof(UpdatePredict))]
     public IActionResult UpdatePredict()
     {
         var result = _service.UpdatePredict();

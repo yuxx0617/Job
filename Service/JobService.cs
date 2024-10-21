@@ -12,14 +12,16 @@ namespace Job.Service;
 
 public class JobService : IJobService
 {
+    private readonly ActRecordService _actRecordService;
     private readonly IJobDao _dao;
     private readonly appSetting _appSetting;
     private readonly HttpClient _httpClient;
-    public JobService(IJobDao dao, IOptions<appSetting> appSetting, HttpClient httpClient)
+    public JobService(IJobDao dao, IOptions<appSetting> appSetting, HttpClient httpClient, ActRecordService actRecordService)
     {
         _dao = dao;
         _appSetting = appSetting.Value;
         _httpClient = httpClient;
+        _actRecordService = actRecordService;
     }
     #region 新增工作
     public ResultViewModel CreateJob(CreateFileImportModel createJob)
@@ -93,13 +95,21 @@ public class JobService : IJobService
         try
         {
             var job = _dao.GetJob(j_id);
+            _actRecordService.CreateActRecord("查看就業懶人包", job.name);
 
             var result = new JobViewModel
             {
                 j_id = job.j_id,
                 name = job.name,
-                MBTI = job.MBTI,
-                HOL = job.HOL,
+                oneDown = job.oneDown,
+                oneTothree = job.oneTothree,
+                threeTofive = job.threeTofive,
+                fiveToten = job.fiveToten,
+                tenTofifteen = job.tenTofifteen,
+                fifteenUp = job.fifteenUp,
+                skill = job.skill,
+                tool = job.tool,
+                certificate = job.certificate,
             };
             return new ResultViewModel<JobViewModel>() { result = result };
         }
@@ -110,55 +120,6 @@ public class JobService : IJobService
     }
     #endregion
     #region 更新工作薪水技能
-    // public async Task<ResultViewModel> UpdateJobContent()
-    // {
-    //     try
-    //     {
-    //         var num = 0;
-    //         var joblist = _dao.JobList();
-    //         foreach (var id = [num] in joblist)
-    //         {
-    //             var url = $"http://127.0.0.1:5000/scrape?job={job.name}";
-
-    //             HttpResponseMessage response = await _httpClient.GetAsync(url);
-
-    //             if (response.IsSuccessStatusCode)
-    //             {
-    //                 var jsonResponse = await response.Content.ReadAsStringAsync();
-    //                 var jobContentData = JsonConvert.DeserializeObject<JobContentViewModel>(jsonResponse);
-    //                 if (jobContentData != null)
-    //                 {
-    //                     var updatejob = new JobModel
-    //                     {
-    //                         j_id = job.j_id,
-    //                         name = job.name,
-    //                         MBTI = job.MBTI,
-    //                         HOL = job.HOL,
-    //                         oneDown = jobContentData.wageSet.oneDown ?? job.oneDown,
-    //                         oneTothree = jobContentData.wageSet.oneTothree ?? job.oneTothree,
-    //                         threeTofive = jobContentData.wageSet.threeTofive ?? job.threeTofive,
-    //                         fiveToten = jobContentData.wageSet.fiveToten ?? job.fiveToten,
-    //                         tenTofifteen = jobContentData.wageSet.tenTofifteen ?? job.tenTofifteen,
-    //                         fifteenUp = jobContentData.wageSet.fifteenUp ?? job.fifteenUp,
-    //                         skill = jobContentData.toolSet.skills ?? job.skill,
-    //                         certificate = jobContentData.toolSet.certificates ?? job.certificate,
-    //                         tool = jobContentData.toolSet.tools ?? job.tool
-    //                     };
-    //                     _dao.UpdateJobContent(updatejob);
-    //                 }
-    //             }
-    //             else
-    //             {
-    //                 return new ResultViewModel("API 請求失敗") { };
-    //             }
-    //         }
-    //         return new ResultViewModel() { };
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return new ResultViewModel(ex.Message) { };
-    //     }
-    // }
     public async Task<ResultViewModel> UpdateJobContent()
     {
         try
@@ -442,8 +403,8 @@ public class JobService : IJobService
     {
         try
         {
+            _actRecordService.CreateActRecord("查看課程", "");
             var lessonlist = _dao.LessonList();
-
             var result = lessonlist.Select(lesson => new LessonViewModel
             {
                 l_id = lesson.l_id,
@@ -466,6 +427,8 @@ public class JobService : IJobService
     {
         try
         {
+            _actRecordService.CreateActRecord("查看證照", "");
+
             var certificatelist = _dao.CertificateList();
 
             var result = certificatelist.Select(certificate => new CertificateViewModel
@@ -492,6 +455,8 @@ public class JobService : IJobService
     {
         try
         {
+            _actRecordService.CreateActRecord("查看補助", "");
+
             var subsidylist = _dao.SubsidyList();
 
             var result = subsidylist.Select(subsidy => new SubsidyViewModel

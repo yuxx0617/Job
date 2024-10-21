@@ -38,21 +38,22 @@ builder.Services.Configure<appSetting>(builder.Configuration.GetSection("appSett
 
 // 註冊 Service 層
 builder.Services.AddScoped<Token>();
+builder.Services.AddScoped<ActRecordService>();
 builder.Services.AddScoped<TestService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITestService, TestService>();
 builder.Services.AddScoped<IUserAnswerService, UserAnswerService>();
-builder.Services.AddScoped<IExternalApiService, ExternalApiService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IPredictService, PredictService>();
+builder.Services.AddScoped<IActRecordService, ActRecordService>();
 
 // 註冊 DAO 層
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<ITestDao, TestDao>();
 builder.Services.AddScoped<IUserAnswerDao, UserAnswerDao>();
-builder.Services.AddScoped<IExternalApiDao, ExternalApiDao>();
 builder.Services.AddScoped<IJobDao, JobDao>();
 builder.Services.AddScoped<IPredictDao, PredictDao>();
+builder.Services.AddScoped<IActRecordDao, ActRecordDao>();
 
 builder.Services.AddHttpClient();
 
