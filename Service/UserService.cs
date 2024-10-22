@@ -393,12 +393,12 @@ public class UserService : IUserService
     }
     #endregion
     #region 會員列表
-    public ResultViewModel<List<UserListViewModel>> UserList()
+    public ResultViewModel<List<UserViewModel>> UserList()
     {
         try
         {
             var userlist = _dao.UserList();
-            var result = userlist.Select(user => new UserListViewModel
+            var result = userlist.Select(user => new UserViewModel
             {
                 account = user.account,
                 name = user.name,
@@ -409,11 +409,11 @@ public class UserService : IUserService
                 birth = user.birth,
             }).ToList();
 
-            return new ResultViewModel<List<UserListViewModel>>() { result = result };
+            return new ResultViewModel<List<UserViewModel>>() { result = result };
         }
         catch (Exception ex)
         {
-            return new ResultViewModel<List<UserListViewModel>>(ex.Message);
+            return new ResultViewModel<List<UserViewModel>>(ex.Message);
         }
     }
     #endregion
@@ -432,6 +432,31 @@ public class UserService : IUserService
         catch (Exception ex)
         {
             return new ResultViewModel(ex.Message);
+        }
+    }
+    #endregion
+    #region 取得單一會員
+    public ResultViewModel<UserViewModel> GetUser(string account)
+    {
+        try
+        {
+            var user = _dao.GetUser(account);
+            var result = new UserViewModel
+            {
+                account = user.account,
+                name = user.name,
+                phone = user.phone,
+                address = user.address,
+                edu = user.edu,
+                sex = user.sex,
+                birth = user.birth,
+            };
+
+            return new ResultViewModel<UserViewModel>() { result = result };
+        }
+        catch (Exception ex)
+        {
+            return new ResultViewModel<UserViewModel>(ex.Message);
         }
     }
     #endregion

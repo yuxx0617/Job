@@ -40,7 +40,7 @@ public class ActRecordDao : IActRecordDao
             .GroupBy(a => a.content)
             .Select(g => new { JobName = g.Key, Count = g.Count() })
             .OrderByDescending(g => g.Count)
-            .Take(4)
+            .Take(5)
             .ToList();
 
         var jobNames = topRecord.Select(r => r.JobName).ToList();

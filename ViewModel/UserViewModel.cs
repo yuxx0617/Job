@@ -2,7 +2,7 @@ using Job.Model;
 
 namespace Job.ViewModel;
 
-public class UserListViewModel
+public class UserViewModel
 {
     public string account { get; set; }
     public string name { get; set; }

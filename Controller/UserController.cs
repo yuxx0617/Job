@@ -72,4 +72,14 @@ public class UserController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [HttpGet(nameof(GetUser))]
+    [Authorize]
+    public IActionResult GetUser(GetUserImportModel getUser)
+    {
+        var result = _service.GetUser(getUser.account);
+        if (result.isSuccess)
+            return Ok(result);
+        return BadRequest(result);
+    }
+
 }
