@@ -407,6 +407,7 @@ public class UserService : IUserService
                 edu = user.edu,
                 sex = user.sex,
                 birth = user.birth,
+                loginDay = user.loginDay,
             }).ToList();
 
             return new ResultViewModel<List<UserViewModel>>() { result = result };
@@ -450,6 +451,7 @@ public class UserService : IUserService
                 edu = user.edu,
                 sex = user.sex,
                 birth = user.birth,
+                loginDay = user.loginDay,
             };
 
             return new ResultViewModel<UserViewModel>() { result = result };

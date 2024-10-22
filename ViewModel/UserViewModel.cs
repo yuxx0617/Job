@@ -12,4 +12,5 @@ public class UserViewModel
     public int edu { get; set; }
     public int sex { get; set; }
     public DateTime birth { get; set; }
+    public DateTime loginDay { get; set; }
 }
