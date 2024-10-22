@@ -13,4 +13,5 @@ public interface IUserDao
     bool LoginDay(UserModel userModel);
     List<UserModel> GetDeleteUsers();
     void DeleteUser(string account);
+    List<int> GetHotRecord();
 }

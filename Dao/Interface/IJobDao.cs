@@ -15,5 +15,4 @@ public interface IJobDao
     List<LessonModel> LessonList();
     List<CertificateModel> CertificateList();
     List<SubsidyModel> SubsidyList();
-    List<int> GetHotRecord();
 }

@@ -12,6 +12,6 @@ public interface IUserService
     ResultViewModel ForgetPassword(ForgetPasswordImportModel forgrtPassword);
     ResultViewModel EditUser(EditUserImportModel editUser);
     ResultViewModel<List<UserViewModel>> UserList();
-    public ResultViewModel<UserViewModel> GetUser(string account);
-
+    ResultViewModel<UserViewModel> GetUser(string account);
+    ResultViewModel<HotJobViewModel> GetHotRecord();
 }

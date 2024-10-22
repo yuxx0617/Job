@@ -3,7 +3,6 @@ using Job.Dao.Interface;
 using Job.ImportModel;
 using Job.Model;
 using Job.Service.Interface;
-using Job.util;
 using Job.ViewModel;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http.Abstractions;

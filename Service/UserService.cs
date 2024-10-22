@@ -462,5 +462,22 @@ public class UserService : IUserService
         }
     }
     #endregion
-
+    #region 取得熱門懶人包職業
+    public ResultViewModel<HotJobViewModel> GetHotRecord()
+    {
+        try
+        {
+            var job = _dao.GetHotRecord();
+            var result = new HotJobViewModel
+            {
+                j_idList = job,
+            };
+            return new ResultViewModel<HotJobViewModel>() { result = result };
+        }
+        catch (Exception ex)
+        {
+            return new ResultViewModel<HotJobViewModel>(ex.Message) { };
+        }
+    }
+    #endregion
 }
