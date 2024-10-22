@@ -33,7 +33,6 @@ public class ActRecordController : ControllerBase
         return BadRequest(result);
     }
     [HttpGet(nameof(GetHotRecord))]
-    [Authorize]
     public IActionResult GetHotRecord()
     {
         var result = _service.GetHotRecord();
