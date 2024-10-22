@@ -94,4 +94,12 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [HttpGet(nameof(GetHotRecord))]
+    public IActionResult GetHotRecord()
+    {
+        var result = _service.GetHotRecord();
+        if (result.isSuccess)
+            return Ok(result);
+        return BadRequest(result);
+    }
 }

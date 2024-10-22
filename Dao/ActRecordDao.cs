@@ -33,23 +33,4 @@ public class ActRecordDao : IActRecordDao
         return _context.ActRecord.ToList();
     }
     #endregion
-    #region 取得熱門職業
-    public List<int> GetHotRecord()
-    {
-        var topRecord = _context.ActRecord
-            .GroupBy(a => a.content)
-            .Select(g => new { JobName = g.Key, Count = g.Count() })
-            .OrderByDescending(g => g.Count)
-            .Take(5)
-            .ToList();
-
-        var jobNames = topRecord.Select(r => r.JobName).ToList();
-        var joblist = _context.Job
-            .Where(job => jobNames.Contains(job.name))
-            .ToList();
-
-        var idList = joblist.Select(j => j.j_id).ToList();
-        return idList;
-    }
-    #endregion
 }

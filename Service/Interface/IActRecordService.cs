@@ -7,5 +7,4 @@ public interface IActRecordService
 {
     ResultViewModel<List<ActRecordViewModel>> ActRecordList();
     ResultViewModel<ActRecordViewModel> GetActRecord(int r_id);
-    ResultViewModel<HotJobViewModel> GetHotRecord();
 }

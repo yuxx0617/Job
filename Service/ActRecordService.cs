@@ -77,7 +77,7 @@ public class ActRecordService : IActRecordService
         }
     }
     #endregion
-    #region 取得單一題目
+    #region 取得單一紀錄
     public ResultViewModel<ActRecordViewModel> GetActRecord(int r_id)
     {
         try
@@ -97,24 +97,6 @@ public class ActRecordService : IActRecordService
         catch (Exception ex)
         {
             return new ResultViewModel<ActRecordViewModel>(ex.Message) { };
-        }
-    }
-    #endregion
-    #region 取得熱門懶人包職業
-    public ResultViewModel<HotJobViewModel> GetHotRecord()
-    {
-        try
-        {
-            var job = _dao.GetHotRecord();
-            var result = new HotJobViewModel
-            {
-                j_idList = job,
-            };
-            return new ResultViewModel<HotJobViewModel>() { result = result };
-        }
-        catch (Exception ex)
-        {
-            return new ResultViewModel<HotJobViewModel>(ex.Message) { };
         }
     }
     #endregion
