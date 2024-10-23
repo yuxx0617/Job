@@ -302,7 +302,6 @@ public class PredictService : IPredictService
 
             return new ResultViewModel<List<TypeStatusViewModel>>() { result = result };
         }
-
         catch (Exception ex)
         {
             return new ResultViewModel<List<TypeStatusViewModel>>(ex.Message) { };
