@@ -302,6 +302,7 @@ public class PredictService : IPredictService
 
             return new ResultViewModel<List<TypeStatusViewModel>>() { result = result };
         }
+
         catch (Exception ex)
         {
             return new ResultViewModel<List<TypeStatusViewModel>>(ex.Message) { };
@@ -545,5 +546,46 @@ public class PredictService : IPredictService
         }
     }
     #endregion
+    #region 職業每月匯出csv
+    public ResultViewModel<string> PredictCsv()
+    {
+        try
+        {
+            // 取得資料列表
+            var predictlist = _dao.Predictlist();
+            var result = predictlist.Select(pre => new PredictViewModel
+            {
+                p_id = pre.p_id,
+                type = pre.type,
+                c_amount = pre.c_amount,
+                v_amount = pre.v_amount,
+                date = pre.date,
+            }).ToList();
 
+            var csv = new StringBuilder();
+            csv.AppendLine("p_id,type,c_amount,v_amount,date");
+
+            foreach (var item in result)
+            {
+                csv.AppendLine($"{item.p_id},{item.type},{item.c_amount},{item.v_amount},{item.date}");
+            }
+
+            var fileName = $"PredictData_{DateTime.Now:yyyyMMddHHmmss}.csv";
+
+            var filePath = Path.Combine(this._appSetting.predict, fileName);
+            if (!Directory.Exists(this._appSetting.predict))
+            {
+                Directory.CreateDirectory(this._appSetting.predict);
+            }
+
+            File.WriteAllText(filePath, csv.ToString());
+
+            return new ResultViewModel<string>() { result = fileName };
+        }
+        catch (Exception ex)
+        {
+            return new ResultViewModel<string>(ex.Message);
+        }
+    }
+    #endregion
 }

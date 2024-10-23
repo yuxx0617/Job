@@ -1,6 +1,7 @@
 using Job.AppDBContext;
 using Job.Dao.Interface;
 using Job.Model;
+using Job.ViewModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Job.Dao;
@@ -453,6 +454,12 @@ public class PredictDao : IPredictDao
     {
         _context.Predict.Add(predictModel);
         _context.SaveChanges();
+    }
+    #endregion
+    #region 取得預測資料列表
+    public List<PredictModel> Predictlist()
+    {
+        return _context.Predict.ToList();
     }
     #endregion
 

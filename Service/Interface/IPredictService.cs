@@ -11,4 +11,5 @@ public interface IPredictService
     Task<ResultViewModel<List<TypeStatusViewModel>>> UpdateStopBusinessType();
     Task<ResultViewModel<List<VacancieViewModel>>> UpdateVacanciesData();
     ResultViewModel UpdatePredict();
+    ResultViewModel<string> PredictCsv();
 }

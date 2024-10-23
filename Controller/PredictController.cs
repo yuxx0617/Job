@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ExternalApiController : ControllerBase
+public class PredictController : ControllerBase
 {
     private readonly IPredictService _service;
 
-    public ExternalApiController(IPredictService service)
+    public PredictController(IPredictService service)
     {
         _service = service;
     }
@@ -49,6 +49,14 @@ public class ExternalApiController : ControllerBase
     public IActionResult UpdatePredict()
     {
         var result = _service.UpdatePredict();
+        if (result.isSuccess)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    [HttpGet(nameof(PredictCsv))]
+    public IActionResult PredictCsv()
+    {
+        var result = _service.PredictCsv();
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);

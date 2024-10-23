@@ -53,5 +53,5 @@ public interface IPredictDao
     List<TypeStatusModel> TypeStatusList21();
     List<TypeStatusModel> TypeStatusList22();
     void CreatePredict(PredictModel predictModel);
-
+    List<PredictModel> Predictlist();
 }

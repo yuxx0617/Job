@@ -120,7 +120,7 @@ public class JobService : IJobService
     }
     #endregion
     #region 更新工作薪水技能
-    public async Task<ResultViewModel> UpdateJobContent()
+    public async Task<ResultViewModel<string>> UpdateJobContent()
     {
         try
         {
@@ -183,15 +183,13 @@ public class JobService : IJobService
                 }
 
                 processedJobs++;
-                Console.WriteLine($"已處理 {processedJobs}/{totalJobs} 筆資料");
             }
-
             var resultMessage = $"更新完成。成功: {successCount}, 失敗: {failureCount}";
-            return new ResultViewModel() { };
+            return new ResultViewModel<string>() { result = resultMessage };
         }
         catch (Exception ex)
         {
-            return new ResultViewModel($"整體處理過程中發生錯誤: {ex.Message}") { };
+            return new ResultViewModel<string>(ex.Message) { };
         }
     }
     #endregion
