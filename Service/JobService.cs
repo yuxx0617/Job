@@ -193,6 +193,81 @@ public class JobService : IJobService
         }
     }
     #endregion
+    #region 更新工作懶人包文字雲
+    public async Task<ResultViewModel<string>> UpdateJobWordCloud()
+    {
+        try
+        {
+            var joblist = _dao.JobList();
+            var totalJobs = joblist.Count;
+            var processedJobs = 0;
+            var successCount = 0;
+            var failureCount = 0;
+            var errorMessages = new List<string>();
+
+            foreach (var job in joblist)
+            {
+                try
+                {
+                    var url = $"http://127.0.0.1:5000/scrape?job={Uri.EscapeDataString(job.name)}";
+
+                    HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonResponse = await response.Content.ReadAsStringAsync();
+                        var jobContentData = JsonConvert.DeserializeObject<JobContentViewModel>(jsonResponse);
+                        if (jobContentData != null)
+                        {
+                            var updatejob = new JobModel
+                            {
+                                j_id = job.j_id,
+                                name = job.name,
+                                MBTI = job.MBTI,
+                                HOL = job.HOL,
+                                oneDown = jobContentData.wageSet.oneDown ?? job.oneDown,
+                                oneTothree = jobContentData.wageSet.oneTothree ?? job.oneTothree,
+                                threeTofive = jobContentData.wageSet.threeTofive ?? job.threeTofive,
+                                fiveToten = jobContentData.wageSet.fiveToten ?? job.fiveToten,
+                                tenTofifteen = jobContentData.wageSet.tenTofifteen ?? job.tenTofifteen,
+                                fifteenUp = jobContentData.wageSet.fifteenUp ?? job.fifteenUp,
+                                skill = jobContentData.toolSet.skills ?? job.skill,
+                                certificate = jobContentData.toolSet.certificates ?? job.certificate,
+                                tool = jobContentData.toolSet.tools ?? job.tool
+                            };
+                            _dao.UpdateJobContent(updatejob);
+                            successCount++;
+                        }
+                        else
+                        {
+                            failureCount++;
+                            errorMessages.Add($"無法解析 j_id: {job.j_id} 的工作內容資料");
+                        }
+                    }
+                    else
+                    {
+                        failureCount++;
+                        errorMessages.Add($"API 請求失敗 (j_id: {job.j_id}): {response.StatusCode}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    failureCount++;
+                    errorMessages.Add($"處理 j_id: {job.j_id} 時發生錯誤: {ex.Message}");
+                }
+
+                processedJobs++;
+            }
+            var resultMessage = $"更新完成。成功: {successCount}, 失敗: {failureCount}";
+            return new ResultViewModel<string>() { result = resultMessage };
+        }
+        catch (Exception ex)
+        {
+            return new ResultViewModel<string>(ex.Message) { };
+        }
+    }
+    #endregion
+
     #region 新增課程
     public ResultViewModel CreateLesson(CreateFileImportModel createLesson)
     {
@@ -471,4 +546,25 @@ public class JobService : IJobService
         }
     }
     #endregion
+    #region 取得所有工作
+    public ResultViewModel<List<JobViewModel>> JobList()
+    {
+        try
+        {
+            var joblist = _dao.JobList();
+
+            var result = joblist.Select(job => new JobViewModel
+            {
+                j_id = job.j_id,
+                name = job.name,
+            }).ToList();
+            return new ResultViewModel<List<JobViewModel>>() { result = result };
+        }
+        catch (Exception ex)
+        {
+            return new ResultViewModel<List<JobViewModel>>(ex.Message);
+        }
+    }
+    #endregion
+
 }

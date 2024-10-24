@@ -14,4 +14,5 @@ public interface IJobService
     ResultViewModel<List<LessonViewModel>> LessonList();
     ResultViewModel<List<CertificateViewModel>> CertificateList();
     ResultViewModel<List<SubsidyViewModel>> SubsidyList();
+    ResultViewModel<List<JobViewModel>> JobList();
 }

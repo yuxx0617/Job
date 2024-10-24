@@ -94,4 +94,12 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [HttpGet(nameof(JobList))]
+    public IActionResult JobList()
+    {
+        var result = _service.JobList();
+        if (result.isSuccess)
+            return Ok(result);
+        return BadRequest(result);
+    }
 }
