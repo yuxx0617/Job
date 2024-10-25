@@ -25,10 +25,10 @@ public class ActRecordService : IActRecordService
         this._HttpContextAccessor = HttpContextAccessor ??
                         throw new ArgumentNullException(nameof(HttpContextAccessor));
 
-        tokenEnCode TokenEnCode = new tokenEnCode(HttpContextAccessor.HttpContext);
-        var PayLoad = TokenEnCode.GetPayLoad();
-        this.account = PayLoad["account"].ToString();
-        this.role = PayLoad["role"].ToString();
+        // tokenEnCode TokenEnCode = new tokenEnCode(HttpContextAccessor.HttpContext);
+        // var PayLoad = TokenEnCode.GetPayLoad();
+        // this.account = PayLoad["account"].ToString();
+        // this.role = PayLoad["role"].ToString();
     }
     #region 新增活動紀錄
     public ResultViewModel CreateActRecord(string activity, string content)

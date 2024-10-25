@@ -40,6 +40,14 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
+    [HttpGet(nameof(UpdateJobWordCloud))]
+    public async Task<IActionResult> UpdateJobWordCloud()
+    {
+        var result = await _service.UpdateJobWordCloud();
+        if (result.isSuccess)
+            return Ok(result);
+        return BadRequest(result);
+    }
     [Authorize(Policy = "AdminOnly")]
     [HttpPost(nameof(CreateLesson))]
     public IActionResult CreateLesson(CreateFileImportModel createLesson)

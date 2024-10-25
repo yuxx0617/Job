@@ -223,18 +223,20 @@ public class PredictDao : IPredictDao
     {
         return _context.TypeStatus.Where(v => v.businessType.Contains("顧問")
         || v.businessType.Contains("管理")
-        || v.businessType.Contains("買賣")
-        || v.businessType.Contains("貿易")
-        || v.businessType.Contains("經理")).ToList();
+        || v.businessType.Contains("產業")
+        || v.businessType.Contains("育成")
+        || v.businessType.Contains("經理")
+        || v.businessType.Contains("其他顧問")).ToList();
     }
     #endregion
     #region 取得業務/貿易/銷售資料
     public List<TypeStatusModel> TypeStatusList02()
     {
         return _context.TypeStatus.Where(v => v.businessType.Contains("業務")
-        || v.businessType.Contains("零售")
+        || v.businessType.Contains("國際")
         || v.businessType.Contains("貿易")
-        || v.businessType.Contains("批發")).ToList();
+        || v.businessType.Contains("批發")
+        || v.businessType.Contains("其他批發")).ToList();
     }
     #endregion
     #region 取得人資/法務/智財資料
@@ -244,8 +246,8 @@ public class PredictDao : IPredictDao
         || v.businessType.Contains("人力")
         || v.businessType.Contains("仲介")
         || v.businessType.Contains("智慧財產")
-        || v.businessType.Contains("法律")
-        || v.businessType.Contains("律師")).ToList();
+        || v.businessType.Contains("法務")
+        || v.businessType.Contains("其他人資")).ToList();
     }
     #endregion
     #region 取得財務/金融/保險資料
@@ -255,7 +257,8 @@ public class PredictDao : IPredictDao
         || v.businessType.Contains("金融")
         || v.businessType.Contains("保險")
         || v.businessType.Contains("財務")
-        || v.businessType.Contains("支付")).ToList();
+        || v.businessType.Contains("支付")
+        || v.businessType.Contains("其他金融")).ToList();
     }
     #endregion
     #region 取得廣告/公關/設計資料
@@ -265,25 +268,29 @@ public class PredictDao : IPredictDao
         || v.businessType.Contains("設計")
         || v.businessType.Contains("公關")
         || v.businessType.Contains("行銷")
-        || v.businessType.Contains("媒體")).ToList();
+        || v.businessType.Contains("媒體")
+        || v.businessType.Contains("其他設計")).ToList();
     }
     #endregion
     #region 取得客服/門市資料
     public List<TypeStatusModel> TypeStatusList06()
     {
         return _context.TypeStatus.Where(v => v.businessType.Contains("零售")
-        || v.businessType.Contains("客服")).ToList();
+        || v.businessType.Contains("客服")
+        || v.businessType.Contains("門市")
+        || v.businessType.Contains("其他零售")).ToList();
     }
     #endregion
     #region 取得工程/研發/生技資料
     public List<TypeStatusModel> TypeStatusList07()
     {
         return _context.TypeStatus.Where(v => v.businessType.Contains("工程")
-        || v.businessType.Contains("研究")
+        || v.businessType.Contains("電信")
         || v.businessType.Contains("能源")
         || v.businessType.Contains("發展")
         || v.businessType.Contains("生物")
-        || v.businessType.Contains("科技")).ToList();
+        || v.businessType.Contains("科技")
+        || v.businessType.Contains("其他工程")).ToList();
     }
     #endregion
     #region 取得資訊/軟體/系統資料
@@ -293,8 +300,10 @@ public class PredictDao : IPredictDao
         || v.businessType.Contains("軟體")
         || v.businessType.Contains("系統")
         || v.businessType.Contains("AI")
-        || v.businessType.Contains("資料")
-        || v.businessType.Contains("電子")).ToList();
+        || v.businessType.Contains("電信")
+        || v.businessType.Contains("電子")
+        || v.businessType.Contains("網路")
+        || v.businessType.Contains("其他軟體")).ToList();
     }
     #endregion
     #region 取得品管/製造/環衛資料
