@@ -12,17 +12,14 @@ namespace Job.Service;
 
 public class JobService : IJobService
 {
-    // private readonly ActRecordService _actRecordService;
     private readonly IJobDao _dao;
     private readonly appSetting _appSetting;
     private readonly HttpClient _httpClient;
-    // ActRecordService actRecordService
     public JobService(IJobDao dao, IOptions<appSetting> appSetting, HttpClient httpClient)
     {
         _dao = dao;
         _appSetting = appSetting.Value;
         _httpClient = httpClient;
-        // _actRecordService = actRecordService;
     }
     #region 新增工作
     public ResultViewModel CreateJob(CreateFileImportModel createJob)
@@ -513,7 +510,6 @@ public class JobService : IJobService
     {
         try
         {
-            // _actRecordService.CreateActRecord("查看課程", "");
             var lessonlist = _dao.LessonList();
             var result = lessonlist.Select(lesson => new LessonViewModel
             {
@@ -537,8 +533,6 @@ public class JobService : IJobService
     {
         try
         {
-            // _actRecordService.CreateActRecord("查看證照", "");
-
             var certificatelist = _dao.CertificateList();
 
             var result = certificatelist.Select(certificate => new CertificateViewModel
@@ -565,8 +559,6 @@ public class JobService : IJobService
     {
         try
         {
-            // _actRecordService.CreateActRecord("查看補助", "");
-
             var subsidylist = _dao.SubsidyList();
 
             var result = subsidylist.Select(subsidy => new SubsidyViewModel

@@ -14,16 +14,14 @@ namespace Job.Service;
 
 public class UserAnswerService : IUserAnswerService
 {
-    private readonly ActRecordService _actRecordService;
     private readonly TestService _testService;
     private readonly IUserAnswerDao _dao;
     private readonly appSetting _appSetting;
     private string account;
     private string role;
     private IHttpContextAccessor _HttpContextAccessor;
-    public UserAnswerService(IUserAnswerDao dao, IOptions<appSetting> appSetting, IHttpContextAccessor HttpContextAccessor, TestService testService, ActRecordService actRecordService)
+    public UserAnswerService(IUserAnswerDao dao, IOptions<appSetting> appSetting, IHttpContextAccessor HttpContextAccessor, TestService testService)
     {
-        _actRecordService = actRecordService;
         _testService = testService;
         _dao = dao;
         _appSetting = appSetting.Value;
@@ -40,7 +38,6 @@ public class UserAnswerService : IUserAnswerService
     {
         try
         {
-            _actRecordService.CreateActRecord("新增測驗", "");
             var today = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             var createanswer = new UserAnswerModel
             {
@@ -123,8 +120,6 @@ public class UserAnswerService : IUserAnswerService
     {
         try
         {
-            _actRecordService.CreateActRecord("查看測驗結果", "");
-
             var answerlist = _dao.AnswerList();
 
             var result = answerlist.Select(answer => new AnswerViewModel

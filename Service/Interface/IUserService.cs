@@ -13,5 +13,4 @@ public interface IUserService
     ResultViewModel EditUser(EditUserImportModel editUser);
     ResultViewModel<List<UserViewModel>> UserList();
     ResultViewModel<UserViewModel> GetUser(string account);
-    ResultViewModel<HotJobViewModel> GetHotRecord();
 }
