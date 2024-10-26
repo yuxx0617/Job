@@ -109,7 +109,11 @@ public class UserAnswerDao : IUserAnswerDao
         var job = _context.Job.Where(a => a.MBTI == mbti && a.HOL == holland).ToList();
         if (job.Count < 5)
         {
-            job = _context.Job.Where(a => a.MBTI == mbti || a.HOL == holland).ToList();
+            job = _context.Job.Where(a => a.HOL == holland).ToList();
+            if (job.Count < 5)
+            {
+                job = _context.Job.Where(a => a.MBTI == mbti || a.HOL == holland).ToList();
+            }
         }
         return job;
     }

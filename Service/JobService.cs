@@ -205,7 +205,7 @@ public class JobService : IJobService
             var failureCount = 0;
             var errorMessages = new List<string>();
 
-            var idlist = new List<int> { 3, 16, 35, 43, 48, 78, 90, 124, 352, 363, 389, 452, 472, 481, 566 };
+            var idlist = new List<int> { 16, 35, 43, 48, 78, 90, 124, 352, 363, 389, 452, 472, 481, 566 };
 
             foreach (var id in idlist)
             {
