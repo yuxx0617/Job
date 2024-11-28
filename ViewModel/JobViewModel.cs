@@ -15,4 +15,6 @@ public class JobViewModel
     public string? skill { get; set; }
     public string? certificate { get; set; }
     public string? tool { get; set; }
+    public string? contentImg { get; set; }
+    public string? experienceImg { get; set; }
 }

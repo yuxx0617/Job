@@ -8,7 +8,7 @@ public interface IJobService
     ResultViewModel CreateJob(CreateFileImportModel createJob);
     ResultViewModel<JobViewModel> GetJob(int j_id);
     Task<ResultViewModel<string>> UpdateJobContent();
-    Task<ResultViewModel<string>> UpdateJobWordCloud();
+    ResultViewModel UpdateJobWordCloud();
     ResultViewModel CreateLesson(CreateFileImportModel createJob);
     ResultViewModel CreateCertificate(CreateFileImportModel createJob);
     ResultViewModel CreateSubsidy(CreateFileImportModel createJob);

@@ -41,10 +41,14 @@ public class JobDao : IJobDao
     #region 更新工作
     public void UpdateJobContent(JobModel jobModel)
     {
-        var existingJob = _context.Job.FirstOrDefault(j => j.j_id == jobModel.j_id);
-        if (existingJob != null)
+        var job = _context.Job.FirstOrDefault(a => a.j_id == jobModel.j_id);
+
+        if (job != null)
         {
-            _context.Entry(existingJob).CurrentValues.SetValues(jobModel);
+            job.contentImg = jobModel.contentImg;
+            _context.Entry(job).Property(a => a.contentImg).IsModified = true;
+            job.experienceImg = jobModel.experienceImg;
+            _context.Entry(job).Property(a => a.experienceImg).IsModified = true;
             _context.SaveChanges();
         }
     }

@@ -106,8 +106,10 @@ public class JobService : IJobService
                 tenTofifteen = job.tenTofifteen,
                 fifteenUp = job.fifteenUp,
                 skill = job.skill,
-                tool = job.tool,
                 certificate = job.certificate,
+                tool = job.tool,
+                contentImg = job.contentImg,
+                experienceImg = job.experienceImg,
             };
             return new ResultViewModel<JobViewModel>() { result = result };
         }
@@ -192,113 +194,26 @@ public class JobService : IJobService
     }
     #endregion
     #region 更新懶人包文字雲
-    public async Task<ResultViewModel<string>> UpdateJobWordCloud()
+    public ResultViewModel UpdateJobWordCloud()
     {
         try
         {
-
-            var processedJobs = 0;
-            var successCount = 0;
-            var failureCount = 0;
-            var errorMessages = new List<string>();
-
-            var idlist = new List<int> { 16, 35, 43, 48, 78, 90, 124, 352, 363, 389, 452, 472, 481, 566 };
-
-            foreach (var id in idlist)
+            var joblist = _dao.JobList();
+            foreach (var job in joblist)
             {
-                var job = _dao.GetJob(id);
-                try
+                var updateJob = new JobModel
                 {
-                    _httpClient.Timeout = TimeSpan.FromMinutes(5);
-                    var url = $"http://127.0.0.1:5000/GWC?job={job.name}";
-                    HttpResponseMessage response = await _httpClient.GetAsync(url);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var jsonResponse = await response.Content.ReadAsStringAsync();
-                        dynamic jsonData = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonResponse);
-                        var base64Image1 = jsonData.wordcloud_1;
-                        var base64Image2 = jsonData.wordcloud_2;
-
-                        if (!string.IsNullOrEmpty(base64Image1) && !string.IsNullOrEmpty(base64Image2))
-                        {
-                            byte[] imageBytes1 = Convert.FromBase64String(base64Image1);
-                            byte[] imageBytes2 = Convert.FromBase64String(base64Image2);
-
-                            var imageFolderPath1 = Path.Combine(_appSetting.experence_Img);
-                            var imageFolderPath2 = Path.Combine(_appSetting.content_Img);
-
-                            // 確保目錄存在
-                            if (!Directory.Exists(imageFolderPath1))
-                                Directory.CreateDirectory(imageFolderPath1);
-                            if (!Directory.Exists(imageFolderPath2))
-                                Directory.CreateDirectory(imageFolderPath2);
-
-                            // 建立檔案名稱
-                            var experienceFileName = $"{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}_wordcloud_1.png";
-                            var contentFileName = $"{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}_wordcloud_2.png";
-
-                            var experienceFilePath = Path.Combine(imageFolderPath1, experienceFileName);
-                            var contentFilePath = Path.Combine(imageFolderPath2, contentFileName);
-
-                            await File.WriteAllBytesAsync(experienceFilePath, imageBytes1);
-                            await File.WriteAllBytesAsync(contentFilePath, imageBytes2);
-                            var jobContentData = JsonConvert.DeserializeObject<JobContentViewModel>(jsonResponse);
-                            if (jobContentData != null)
-                            {
-                                var updateJob = new JobModel
-                                {
-                                    j_id = id,
-                                    name = job.name,
-                                    MBTI = job.MBTI,
-                                    HOL = job.HOL,
-                                    oneDown = jobContentData.wageSet.oneDown ?? job.oneDown,
-                                    oneTothree = jobContentData.wageSet.oneTothree ?? job.oneTothree,
-                                    threeTofive = jobContentData.wageSet.threeTofive ?? job.threeTofive,
-                                    fiveToten = jobContentData.wageSet.fiveToten ?? job.fiveToten,
-                                    tenTofifteen = jobContentData.wageSet.tenTofifteen ?? job.tenTofifteen,
-                                    fifteenUp = jobContentData.wageSet.fifteenUp ?? job.fifteenUp,
-                                    skill = jobContentData.toolSet.skills ?? job.skill,
-                                    certificate = jobContentData.toolSet.certificates ?? job.certificate,
-                                    tool = jobContentData.toolSet.tools ?? job.tool,
-                                    contentImg = contentFileName,
-                                    experienceImg = experienceFileName
-                                };
-                                _dao.UpdateJobContent(updateJob);
-                                successCount++;
-                            }
-                            else
-                            {
-                                failureCount++;
-                                errorMessages.Add($"無法解析 j_id: {job.j_id} 的工作內容資料");
-                            }
-                        }
-                        else
-                        {
-                            failureCount++;
-                            errorMessages.Add($"無法解析圖片 (j_id: {job.j_id})");
-                        }
-                    }
-                    else
-                    {
-                        failureCount++;
-                        errorMessages.Add($"API 請求失敗 (j_id: {job.j_id}): {response.StatusCode}");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    failureCount++;
-                    errorMessages.Add($"處理 j_id: {job.j_id} 時發生錯誤: {ex.Message}");
-                }
-                processedJobs++;
+                    j_id = job.j_id,
+                    contentImg = job.name + "_內容.png",
+                    experienceImg = job.name + "_心得.png"
+                };
+                _dao.UpdateJobContent(updateJob);
             }
-
-            var resultMessage = $"更新完成。成功: {successCount}, 失敗: {failureCount}";
-            return new ResultViewModel<string> { result = resultMessage };
+            return new ResultViewModel { };
         }
         catch (Exception ex)
         {
-            return new ResultViewModel<string>(ex.Message);
+            return new ResultViewModel(ex.Message);
         }
     }
     #endregion
@@ -586,6 +501,17 @@ public class JobService : IJobService
             {
                 j_id = job.j_id,
                 name = job.name,
+                oneDown = job.oneDown,
+                oneTothree = job.oneTothree,
+                threeTofive = job.threeTofive,
+                fiveToten = job.fiveToten,
+                tenTofifteen = job.tenTofifteen,
+                fifteenUp = job.fifteenUp,
+                skill = job.skill,
+                certificate = job.certificate,
+                tool = job.tool,
+                contentImg = job.contentImg,
+                experienceImg = job.experienceImg,
             }).ToList();
             return new ResultViewModel<List<JobViewModel>>() { result = result };
         }

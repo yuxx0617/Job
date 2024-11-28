@@ -506,36 +506,82 @@ public class PredictService : IPredictService
     }
     #endregion
     #region 抓職業每月數量並新增
+    // public ResultViewModel UpdatePredict()
+    // {
+    //     try
+    //     {
+    //         var today = DateTime.Now;
+    //         var typeList = new List<string> { "經營/行政/總務", "業務/貿易/銷售", "人資/法務/智財", "財務/金融/保險", "廣告/公關/設計",
+    //      "客服/門市" ,"工程/研發/生技","資訊/軟體/系統","品管/製造/環衛","技術/維修/操作","營建/製圖/施作","新聞/出版/印刷",
+    //      "傳播/娛樂/藝術","教育/學術/研究","物流/運輸/資材","旅遊/餐飲/休閒","醫療/美容/保健","保全/軍警消","清潔/家事/托育",
+    //      "農林漁牧相關","行銷/企劃/專案","其他職類"};
+
+    //         for (int i = 1; i <= 22; i++)
+    //         {
+
+    //             var vacancieResult = _dao.GetType().GetMethod($"VacancieList{i:D2}").Invoke(_dao, null) as IEnumerable<object>;
+    //             var vacancieFilter = vacancieResult.OfType<dynamic>().Where(v => v.date.Contains(today.ToString("yyyyMM")));
+
+    //             var companyResult = _dao.GetType().GetMethod($"TypeStatusList{i:D2}").Invoke(_dao, null) as IEnumerable<object>;
+    //             var companyFilter = companyResult.OfType<dynamic>().Where(v => v.date.Contains(today.ToString("yyyyMM")));
+
+    //             int vacancieAmount = vacancieFilter.Count();
+    //             int companyAmount = companyFilter.Count();
+
+    //             var createpredict = new PredictModel
+    //             {
+    //                 type = typeList[i - 1],
+    //                 c_amount = companyAmount,
+    //                 v_amount = vacancieAmount,
+    //                 date = today.ToString("yyyyMM")
+    //             };
+    //             _dao.CreatePredict(createpredict);
+    //         }
+    //         return new ResultViewModel() { };
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return new ResultViewModel(ex.Message);
+    //     }
+    // }
     public ResultViewModel UpdatePredict()
     {
         try
         {
-            var today = DateTime.Now;
+            var startDate = new DateTime(2022, 1, 1);
+            var endDate = new DateTime(2024, 10, 1);
             var typeList = new List<string> { "經營/行政/總務", "業務/貿易/銷售", "人資/法務/智財", "財務/金融/保險", "廣告/公關/設計",
-         "客服/門市" ,"工程/研發/生技","資訊/軟體/系統","品管/製造/環衛","技術/維修/操作","營建/製圖/施作","新聞/出版/印刷",
-         "傳播/娛樂/藝術","教育/學術/研究","物流/運輸/資材","旅遊/餐飲/休閒","醫療/美容/保健","保全/軍警消","清潔/家事/托育",
-         "農林漁牧相關","行銷/企劃/專案","其他職類"};
+            "客服/門市" ,"工程/研發/生技","資訊/軟體/系統","品管/製造/環衛","技術/維修/操作","營建/製圖/施作","新聞/出版/印刷",
+            "傳播/娛樂/藝術","教育/學術/研究","物流/運輸/資材","旅遊/餐飲/休閒","醫療/美容/保健","保全/軍警消","清潔/家事/托育",
+            "農林漁牧相關","行銷/企劃/專案","其他職類"};
 
-            for (int i = 1; i <= 22; i++)
+            while (startDate <= endDate)
             {
-
-                var vacancieResult = _dao.GetType().GetMethod($"VacancieList{i:D2}").Invoke(_dao, null) as IEnumerable<object>;
-                var vacancieFilter = vacancieResult.OfType<dynamic>().Where(v => v.date.Contains(today.ToString("yyyyMM")));
-
-                var companyResult = _dao.GetType().GetMethod($"TypeStatusList{i:D2}").Invoke(_dao, null) as IEnumerable<object>;
-                var companyFilter = companyResult.OfType<dynamic>().Where(v => v.date.Contains(today.ToString("yyyyMM")));
-
-                int vacancieAmount = vacancieFilter.Count();
-                int companyAmount = companyFilter.Count();
-
-                var createpredict = new PredictModel
+                for (int i = 1; i <= 22; i++)
                 {
-                    type = typeList[i - 1],
-                    c_amount = companyAmount,
-                    v_amount = vacancieAmount,
-                    date = today.ToString("yyyyMM")
-                };
-                _dao.CreatePredict(createpredict);
+                    // 呼叫對應的 VacancieList 方法，篩選當前月份的職缺
+                    var vacancieResult = _dao.GetType().GetMethod($"VacancieList{i:D2}").Invoke(_dao, null) as IEnumerable<object>;
+                    var vacancieFilter = vacancieResult.OfType<dynamic>().Where(v => v.date.Contains(startDate.ToString("yyyyMM")));
+
+                    // 呼叫對應的 TypeStatusList 方法，篩選當前月份的公司數據
+                    var companyResult = _dao.GetType().GetMethod($"TypeStatusList{i:D2}").Invoke(_dao, null) as IEnumerable<object>;
+                    var companyFilter = companyResult.OfType<dynamic>().Where(v => v.date.Contains(startDate.ToString("yyyyMM")));
+
+                    int vacancieAmount = vacancieFilter.Count();
+                    int companyAmount = companyFilter.Count();
+
+                    // 建立並新增 PredictModel 物件
+                    var createpredict = new PredictModel
+                    {
+                        type = typeList[i - 1],
+                        c_amount = companyAmount,
+                        v_amount = vacancieAmount,
+                        date = startDate.ToString("yyyyMM")
+                    };
+                    _dao.CreatePredict(createpredict);
+                }
+                // 更新到下一個月
+                startDate = startDate.AddMonths(1);
             }
             return new ResultViewModel() { };
         }
@@ -544,6 +590,7 @@ public class PredictService : IPredictService
             return new ResultViewModel(ex.Message);
         }
     }
+
     #endregion
     #region 職業每月匯出csv
     public ResultViewModel<string> PredictCsv()

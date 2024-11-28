@@ -40,10 +40,10 @@ public class JobController : ControllerBase
             return Ok(result);
         return BadRequest(result);
     }
-    [HttpGet(nameof(UpdateJobWordCloud))]
-    public async Task<IActionResult> UpdateJobWordCloud()
+    [HttpPut(nameof(UpdateJobWordCloud))]
+    public IActionResult UpdateJobWordCloud()
     {
-        var result = await _service.UpdateJobWordCloud();
+        var result = _service.UpdateJobWordCloud();
         if (result.isSuccess)
             return Ok(result);
         return BadRequest(result);
